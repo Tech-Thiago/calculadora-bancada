@@ -18,6 +18,8 @@ import {
   FlaskConical,
   Cpu,
   Beaker,
+  Wifi,
+  WifiOff,
 } from "lucide-react";
 import ModuloCompositos from "./modules/ModuloCompositos";
 import ModuloPolimeros from "./modules/ModuloPolimeros";
@@ -43,11 +45,34 @@ export default function App() {
   const [painelDadosAberto, setPainelDadosAberto] = useState(false);
   const [linkCopiado, setLinkCopiado] = useState(false);
   const [wakeLockAtivo, setWakeLockAtivo] = useState(false);
+  const [online, setOnline] = useState(() =>
+    typeof navigator !== "undefined" ? navigator.onLine : true
+  );
+
+  // Resolucao da balanca e metadados da ficha de bancada (PDF)
+  const [resolucaoBalanca, setResolucaoBalanca] = useState("0.0001");
+  const [metaFicha, setMetaFicha] = useState({
+    laboratorio: "",
+    lote: "",
+    responsavel: "",
+  });
 
   const [modoEscuro, setModoEscuro] = useState(() => {
     const salvo = localStorage.getItem("calc_bancada_tema");
     return salvo ? salvo === "dark" : false;
   });
+
+  useEffect(() => {
+    function atualizarRede() {
+      setOnline(navigator.onLine);
+    }
+    window.addEventListener("online", atualizarRede);
+    window.addEventListener("offline", atualizarRede);
+    return () => {
+      window.removeEventListener("online", atualizarRede);
+      window.removeEventListener("offline", atualizarRede);
+    };
+  }, []);
 
   useEffect(() => {
     const root = document.documentElement;
@@ -105,11 +130,12 @@ export default function App() {
     }
   }
 
-  // MODO BALANCA (Cartoes grandes e arredondados)
+  // MODO BALANCA
   if (dadosBalanca) {
     const totalItens = dadosBalanca.itens.length;
     const totalMarcados = dadosBalanca.itens.filter((i) => marcados[i.id]).length;
     const progressoPct = totalItens > 0 ? (totalMarcados / totalItens) * 100 : 0;
+    const minResG = Number(resolucaoBalanca) || 0.0001;
 
     return (
       <div className="min-h-screen bg-[#0b0d12] text-slate-50 px-4 py-8 sm:px-8 print-ficha">
@@ -179,6 +205,63 @@ export default function App() {
               </div>
             </div>
 
+            {/* Resolucao da balanca e campos da ficha PDF */}
+            <div className="grid grid-cols-1 sm:grid-cols-4 gap-2.5 pt-2 border-t border-white/10">
+              <div className="no-print">
+                <label className="block text-[11px] font-semibold text-slate-400 mb-1">
+                  Resolução da balança
+                </label>
+                <select
+                  value={resolucaoBalanca}
+                  onChange={(e) => setResolucaoBalanca(e.target.value)}
+                  className="w-full rounded-xl bg-[#0b0d12] border border-white/10 px-3 py-2 text-xs font-mono text-white"
+                >
+                  <option value="0.0001">Analítica (0,0001 g)</option>
+                  <option value="0.001">Precisão (0,001 g)</option>
+                  <option value="0.01">Semi-analítica (0,01 g)</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-semibold text-slate-400 mb-1">
+                  Laboratório
+                </label>
+                <input
+                  type="text"
+                  placeholder="Ex: LabNano / FCT"
+                  value={metaFicha.laboratorio}
+                  onChange={(e) => setMetaFicha((p) => ({ ...p, laboratorio: e.target.value }))}
+                  className="w-full rounded-xl bg-[#0b0d12] border border-white/10 px-3 py-2 text-xs text-white"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-semibold text-slate-400 mb-1">
+                  Amostra / Lote
+                </label>
+                <input
+                  type="text"
+                  placeholder="Ex: BTO-02"
+                  value={metaFicha.lote}
+                  onChange={(e) => setMetaFicha((p) => ({ ...p, lote: e.target.value }))}
+                  className="w-full rounded-xl bg-[#0b0d12] border border-white/10 px-3 py-2 text-xs text-white"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-semibold text-slate-400 mb-1">
+                  Responsável
+                </label>
+                <input
+                  type="text"
+                  placeholder="Nome do operador"
+                  value={metaFicha.responsavel}
+                  onChange={(e) => setMetaFicha((p) => ({ ...p, responsavel: e.target.value }))}
+                  className="w-full rounded-xl bg-[#0b0d12] border border-white/10 px-3 py-2 text-xs text-white"
+                />
+              </div>
+            </div>
+
             <div className="h-2 w-full bg-white/10 rounded-full overflow-hidden no-print">
               <div
                 style={{ width: `${progressoPct}%` }}
@@ -191,6 +274,9 @@ export default function App() {
             {dadosBalanca.itens.map((item) => {
               const feito = !!marcados[item.id];
               const valorTexto = item.valorDisplay ?? `${Number(item.massaG).toFixed(4)} g`;
+              const massaNumerica = typeof item.massaG === "number" ? item.massaG : null;
+              const abaixoResolucao = massaNumerica !== null && massaNumerica > 0 && massaNumerica < minResG;
+
               return (
                 <button
                   key={item.id}
@@ -215,8 +301,14 @@ export default function App() {
                       {item.detalhe && (
                         <div className="text-xs sm:text-sm text-slate-400 mt-0.5">{item.detalhe}</div>
                       )}
-                      {item.alertas?.length > 0 && (
+                      {abaixoResolucao && (
                         <div className="inline-flex items-center gap-1.5 text-xs font-medium text-amber-300 bg-amber-500/15 px-3 py-1 rounded-full mt-2">
+                          <AlertTriangle className="w-3.5 h-3.5" />
+                          Massa abaixo da resolução ({minResG} g) — considere aumentar a batelada ou usar solução estoque
+                        </div>
+                      )}
+                      {item.alertas?.length > 0 && (
+                        <div className="inline-flex items-center gap-1.5 text-xs font-medium text-amber-300 bg-amber-500/15 px-3 py-1 rounded-full mt-2 ml-0 sm:ml-1.5">
                           <AlertTriangle className="w-3.5 h-3.5" /> {item.alertas.join(" · ")}
                         </div>
                       )}
@@ -242,7 +334,6 @@ export default function App() {
       {/* SIDEBAR FLUTUANTE ARREDONDADA */}
       <aside className="lg:w-72 lg:sticky lg:top-5 lg:h-[calc(100vh-2.5rem)] shrink-0 rounded-3xl bg-white dark:bg-[#141720] border border-slate-200/70 dark:border-white/8 shadow-[0_12px_36px_-12px_rgba(15,23,42,0.08)] flex flex-col justify-between p-4">
         <div className="space-y-5">
-          {/* Marca */}
           <div className="flex items-center justify-between px-1">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-indigo-600 to-violet-600 text-white flex items-center justify-center shadow-lg shadow-indigo-500/25">
@@ -251,7 +342,7 @@ export default function App() {
               <div>
                 <h1 className="text-base font-extrabold tracking-tight leading-none">LabCalc</h1>
                 <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                  Bancada Científica
+                  Bancada · v1.0.0
                 </p>
               </div>
             </div>
@@ -276,7 +367,6 @@ export default function App() {
             </div>
           </div>
 
-          {/* Navegacao em pilulas */}
           <nav className="flex lg:flex-col gap-1.5 overflow-x-auto pb-1 lg:pb-0">
             {MODULOS.map((m) => {
               const Icone = m.icon;
@@ -300,7 +390,6 @@ export default function App() {
           </nav>
         </div>
 
-        {/* Rodape da Sidebar */}
         <div className="hidden lg:flex flex-col gap-2 pt-4 border-t border-slate-100 dark:border-white/8">
           <button
             type="button"
@@ -324,7 +413,6 @@ export default function App() {
 
       {/* AREA PRINCIPAL */}
       <div className="flex-1 min-w-0 flex flex-col gap-5">
-        {/* Cabecalho arredondado */}
         <header className="rounded-3xl bg-white/85 dark:bg-[#141720]/85 backdrop-blur-md border border-slate-200/70 dark:border-white/8 px-6 py-5 shadow-[0_8px_24px_-12px_rgba(15,23,42,0.06)] flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-3.5">
             <div className="w-11 h-11 rounded-2xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center shrink-0">
@@ -340,9 +428,15 @@ export default function App() {
             </div>
           </div>
 
-          <span className="hidden sm:inline-flex items-center gap-2 text-xs font-semibold text-emerald-700 dark:text-emerald-300 bg-emerald-500/10 border border-emerald-500/20 px-3.5 py-1.5 rounded-full">
-            <span className="w-2 h-2 rounded-full bg-emerald-500" />
-            Offline · IUPAC 118
+          <span
+            className={`hidden sm:inline-flex items-center gap-2 text-xs font-semibold px-3.5 py-1.5 rounded-full border ${
+              online
+                ? "text-emerald-700 dark:text-emerald-300 bg-emerald-500/10 border-emerald-500/20"
+                : "text-amber-700 dark:text-amber-300 bg-amber-500/10 border-amber-500/20"
+            }`}
+          >
+            {online ? <Wifi className="w-3.5 h-3.5" /> : <WifiOff className="w-3.5 h-3.5" />}
+            {online ? "Cálculo local · PubChem online" : "Modo offline · PubChem indisponível"}
           </span>
         </header>
 
