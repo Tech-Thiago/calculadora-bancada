@@ -1,0 +1,136 @@
+﻿@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --font-sans: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  --bg-canvas: #f2f4f8;
+  --bg-surface: #ffffff;
+  --bg-subtle: #f4f6fa;
+  --bg-input: #f1f5f9;
+  --border-subtle: rgba(15, 23, 42, 0.06);
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #64748b;
+  --accent: #6366f1;
+  --shadow-card: 0 10px 30px -10px rgba(15, 23, 42, 0.08), 0 1px 3px rgba(15, 23, 42, 0.04);
+}
+
+.dark {
+  --bg-canvas: #0b0d12;
+  --bg-surface: #141720;
+  --bg-subtle: #1b1f2b;
+  --bg-input: #1e2330;
+  --border-subtle: rgba(255, 255, 255, 0.07);
+  --text-primary: #f8fafc;
+  --text-secondary: #cbd5e1;
+  --text-muted: #94a3b8;
+  --accent: #818cf8;
+  --shadow-card: 0 16px 40px -12px rgba(0, 0, 0, 0.55), 0 1px 0 rgba(255, 255, 255, 0.04) inset;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--bg-canvas);
+  background-image:
+    radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.09) 0px, transparent 45%),
+    radial-gradient(at 100% 100%, rgba(14, 165, 233, 0.08) 0px, transparent 45%);
+  background-attachment: fixed;
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+}
+
+.font-mono,
+input[type="number"],
+td.font-mono {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Padrao Bento super arredondado aplicado automaticamente aos 5 modulos */
+.lab-workspace .bg-white {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 1.5rem;
+  box-shadow: var(--shadow-card);
+}
+
+.lab-workspace .bg-slate-50 {
+  background-color: var(--bg-subtle);
+  border: 1px solid var(--border-subtle);
+  border-radius: 1.125rem;
+}
+
+.lab-workspace .border-slate-200,
+.lab-workspace .border-slate-100,
+.lab-workspace .border-slate-300 {
+  border-color: var(--border-subtle);
+}
+
+.lab-workspace .divide-slate-100 > :not(:last-child) {
+  border-color: var(--border-subtle);
+}
+
+.lab-workspace .text-slate-900,
+.lab-workspace .text-slate-800 {
+  color: var(--text-primary);
+}
+
+.lab-workspace .text-slate-600 {
+  color: var(--text-secondary);
+}
+
+.lab-workspace .text-slate-500,
+.lab-workspace .text-slate-400 {
+  color: var(--text-muted);
+}
+
+.lab-workspace input,
+.lab-workspace select {
+  background-color: var(--bg-input);
+  color: var(--text-primary);
+  border: 1.5px solid transparent;
+  border-radius: 0.875rem;
+  transition: all 0.18s ease;
+}
+
+.lab-workspace input:hover,
+.lab-workspace select:hover {
+  border-color: rgba(99, 102, 241, 0.25);
+}
+
+.lab-workspace input:focus,
+.lab-workspace select:focus {
+  outline: none;
+  background-color: var(--bg-surface);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.16);
+}
+
+.lab-workspace input:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+/* Impressao limpa (Ficha de Bancada / PDF) */
+@media print {
+  body {
+    background: #ffffff !important;
+    background-image: none !important;
+    color: #000000 !important;
+  }
+  .no-print {
+    display: none !important;
+  }
+  .print-ficha {
+    background: #ffffff !important;
+    color: #000000 !important;
+    padding: 0 !important;
+  }
+  .print-ficha * {
+    color: #000000 !important;
+    border-color: #e2e8f0 !important;
+    background: #ffffff !important;
+    box-shadow: none !important;
+  }
+}

@@ -1,0 +1,337 @@
+﻿{
+  "schemaVersion": 1,
+  "reagentes": [
+    {
+      "id": "epoxi_dgeba",
+      "nome": "Resina Epóxi DGEBA (básica)",
+      "formula": "C21H25ClO5",
+      "apelidos": ["epoxi", "dgeba", "resina epoxida", "der 331", "araldite"],
+      "estado": "liquido",
+      "modulos": ["compositos", "polimeros"],
+      "densidade_g_cm3": 1.16,
+      "massa_molar_g_mol": 340.41,
+      "pureza_padrao_pct": 100.0,
+      "alertas": ["irritante_pele"],
+      "fonte": "Lee & Neville; ASTM D1652 (EEW típico 182–192 g/eq)",
+      "especifico": {
+        "polimeros": { "papel": "resina", "eew_g_eq": 187.0 }
+      }
+    },
+    {
+      "id": "epoxi_dgebf",
+      "nome": "Resina Epóxi DGEBF (Bisfenol F)",
+      "formula": null,
+      "apelidos": ["dgebf", "bisfenol f", "epoxi baixa viscosidade"],
+      "estado": "liquido",
+      "modulos": ["compositos", "polimeros"],
+      "densidade_g_cm3": 1.19,
+      "massa_molar_g_mol": null,
+      "pureza_padrao_pct": 100.0,
+      "alertas": ["irritante_pele"],
+      "fonte": "Pascault & Williams (EEW típico 165–175 g/eq)",
+      "especifico": {
+        "polimeros": { "papel": "resina", "eew_g_eq": 170.0 }
+      }
+    },
+    {
+      "id": "epoxi_novolac",
+      "nome": "Resina Epóxi Novolac (EPN)",
+      "formula": null,
+      "apelidos": ["novolac", "epn", "alta tg"],
+      "estado": "liquido",
+      "modulos": ["compositos", "polimeros"],
+      "densidade_g_cm3": 1.22,
+      "massa_molar_g_mol": null,
+      "pureza_padrao_pct": 100.0,
+      "alertas": ["irritante_pele"],
+      "fonte": "Lee & Neville (EEW típico 172–179 g/eq)",
+      "especifico": {
+        "polimeros": { "papel": "resina", "eew_g_eq": 176.0 }
+      }
+    },
+    {
+      "id": "poliester_insaturado",
+      "nome": "Resina Poliéster Insaturada (ortoftálica)",
+      "formula": null,
+      "apelidos": ["poliester", "up", "resina ortoftalica"],
+      "estado": "liquido",
+      "modulos": ["compositos", "polimeros"],
+      "densidade_g_cm3": 1.12,
+      "massa_molar_g_mol": null,
+      "pureza_padrao_pct": 100.0,
+      "alertas": ["volatil", "usar_capela", "inflamavel"],
+      "fonte": "Chawla; literatura técnica (25 °C)",
+      "especifico": {
+        "polimeros": { "papel": "resina", "eew_g_eq": null }
+      }
+    },
+    {
+      "id": "silicone_pdms",
+      "nome": "Elastômero de Silicone PDMS (Base Sylgard 184)",
+      "formula": "(C2H6OSi)n",
+      "apelidos": ["pdms", "silicone", "sylgard"],
+      "estado": "liquido",
+      "modulos": ["compositos", "polimeros"],
+      "densidade_g_cm3": 1.03,
+      "massa_molar_g_mol": null,
+      "pureza_padrao_pct": 100.0,
+      "alertas": [],
+      "fonte": "Dow Corning Technical Data Sheet (razão padrão 10:1 = 10 phr)",
+      "especifico": {
+        "polimeros": { "papel": "resina", "eew_g_eq": null }
+      }
+    },
+    {
+      "id": "endurecedor_teta",
+      "nome": "Trietilenotetramina (TETA)",
+      "formula": "C6H18N4",
+      "apelidos": ["teta", "amina alifatica", "endurecedor epoxi"],
+      "estado": "liquido",
+      "modulos": ["polimeros"],
+      "densidade_g_cm3": 0.982,
+      "massa_molar_g_mol": 146.23,
+      "pureza_padrao_pct": 97.0,
+      "alertas": ["corrosivo", "usar_capela", "higroscopico"],
+      "fonte": "Lee & Neville; CRC Handbook (AHEW teórico 24.4 g/eq)",
+      "especifico": {
+        "polimeros": { "papel": "endurecedor", "ahew_g_eq": 24.4, "phr_padrao": 13.0 }
+      }
+    },
+    {
+      "id": "endurecedor_deta",
+      "nome": "Dietilenotriamina (DETA)",
+      "formula": "C4H13N3",
+      "apelidos": ["deta", "amina alifatica"],
+      "estado": "liquido",
+      "modulos": ["polimeros"],
+      "densidade_g_cm3": 0.955,
+      "massa_molar_g_mol": 103.17,
+      "pureza_padrao_pct": 99.0,
+      "alertas": ["corrosivo", "usar_capela", "higroscopico"],
+      "fonte": "Lee & Neville; CRC Handbook (AHEW teórico 20.6 g/eq)",
+      "especifico": {
+        "polimeros": { "papel": "endurecedor", "ahew_g_eq": 20.6, "phr_padrao": 11.0 }
+      }
+    },
+    {
+      "id": "endurecedor_ipda",
+      "nome": "Isoforonodiamina (IPDA)",
+      "formula": "C10H22N2",
+      "apelidos": ["ipda", "amina cicloalifatica"],
+      "estado": "liquido",
+      "modulos": ["polimeros"],
+      "densidade_g_cm3": 0.922,
+      "massa_molar_g_mol": 170.30,
+      "pureza_padrao_pct": 99.0,
+      "alertas": ["corrosivo", "usar_capela"],
+      "fonte": "Pascault & Williams (AHEW teórico 42.6 g/eq)",
+      "especifico": {
+        "polimeros": { "papel": "endurecedor", "ahew_g_eq": 42.6, "phr_padrao": 22.8 }
+      }
+    },
+    {
+      "id": "endurecedor_jeffamine_d230",
+      "nome": "Polieteramina (Jeffamine D-230)",
+      "formula": null,
+      "apelidos": ["jeffamine", "d230", "d-230", "polieteramina"],
+      "estado": "liquido",
+      "modulos": ["polimeros"],
+      "densidade_g_cm3": 0.948,
+      "massa_molar_g_mol": 230.0,
+      "pureza_padrao_pct": 100.0,
+      "alertas": ["corrosivo"],
+      "fonte": "Huntsman Technical Bulletin (AHEW típico 60.0 g/eq)",
+      "especifico": {
+        "polimeros": { "papel": "endurecedor", "ahew_g_eq": 60.0, "phr_padrao": 32.0 }
+      }
+    },
+    {
+      "id": "endurecedor_dds",
+      "nome": "4,4'-Diaminodifenilsulfona (DDS)",
+      "formula": "C12H12N2O2S",
+      "apelidos": ["dds", "amina aromatica", "alta tg"],
+      "estado": "solido",
+      "modulos": ["polimeros"],
+      "densidade_g_cm3": 1.33,
+      "massa_molar_g_mol": 248.30,
+      "pureza_padrao_pct": 97.0,
+      "alertas": ["irritante_pele"],
+      "fonte": "Pascault & Williams (AHEW teórico 62.1 g/eq)",
+      "especifico": {
+        "polimeros": { "papel": "endurecedor", "ahew_g_eq": 62.1, "phr_padrao": 33.2 }
+      }
+    },
+    {
+      "id": "catalisador_mekp",
+      "nome": "Peróxido de Metil Etil Cetona (MEKP)",
+      "formula": "C8H18O6",
+      "apelidos": ["mekp", "butanoox", "catalisador poliester"],
+      "estado": "liquido",
+      "modulos": ["polimeros"],
+      "densidade_g_cm3": 1.17,
+      "massa_molar_g_mol": 210.22,
+      "pureza_padrao_pct": 50.0,
+      "alertas": ["corrosivo", "oxidante", "usar_capela"],
+      "fonte": "Literatura técnica de poliéster insaturado (uso típico 1–2 phr)",
+      "especifico": {
+        "polimeros": { "papel": "endurecedor", "ahew_g_eq": null, "phr_padrao": 1.5 }
+      }
+    },
+    {
+      "id": "pla",
+      "nome": "Ácido Polilático (PLA)",
+      "formula": "(C3H4O2)n",
+      "apelidos": ["pla", "poli(acido latico)"],
+      "estado": "solido",
+      "modulos": ["compositos", "polimeros"],
+      "densidade_g_cm3": 1.24,
+      "massa_molar_g_mol": null,
+      "pureza_padrao_pct": 100.0,
+      "alertas": ["higroscopico", "secar_estufa"],
+      "fonte": "Callister; literatura técnica (25 °C)",
+      "especifico": {
+        "polimeros": { "papel": "resina", "eew_g_eq": null }
+      }
+    },
+    {
+      "id": "pead",
+      "nome": "Polietileno de Alta Densidade (PEAD)",
+      "formula": "(C2H4)n",
+      "apelidos": ["pead", "hdpe", "polietileno"],
+      "estado": "solido",
+      "modulos": ["compositos", "polimeros"],
+      "densidade_g_cm3": 0.955,
+      "massa_molar_g_mol": null,
+      "pureza_padrao_pct": 100.0,
+      "alertas": [],
+      "fonte": "Callister (25 °C)",
+      "especifico": {
+        "polimeros": { "papel": "resina", "eew_g_eq": null }
+      }
+    },
+    {
+      "id": "fibra_carbono_padrao",
+      "nome": "Fibra de Carbono (módulo padrão)",
+      "formula": "C",
+      "apelidos": ["carbono", "cf", "fibra de carbono"],
+      "estado": "solido",
+      "modulos": ["compositos"],
+      "densidade_g_cm3": 1.78,
+      "massa_molar_g_mol": 12.011,
+      "pureza_padrao_pct": 100.0,
+      "alertas": [],
+      "fonte": "Chawla; ASTM D2734",
+      "especifico": {}
+    },
+    {
+      "id": "fibra_vidro_e",
+      "nome": "Fibra de Vidro Tipo E",
+      "formula": null,
+      "apelidos": ["fibra de vidro", "e-glass", "vidro e"],
+      "estado": "solido",
+      "modulos": ["compositos"],
+      "densidade_g_cm3": 2.54,
+      "massa_molar_g_mol": null,
+      "pureza_padrao_pct": 100.0,
+      "alertas": [],
+      "fonte": "Chawla; Callister",
+      "especifico": {}
+    },
+    {
+      "id": "sic_beta",
+      "nome": "Carbeto de Silício (SiC)",
+      "formula": "SiC",
+      "apelidos": ["carbeto de silicio", "sic"],
+      "estado": "solido",
+      "modulos": ["compositos", "polimeros", "ceramica"],
+      "densidade_g_cm3": 3.21,
+      "massa_molar_g_mol": 40.096,
+      "pureza_padrao_pct": 99.0,
+      "alertas": [],
+      "fonte": "CRC Handbook (densidade real teórica)",
+      "especifico": {
+        "polimeros": { "papel": "carga" }
+      }
+    },
+    {
+      "id": "al2o3_alfa",
+      "nome": "Alumina Alfa (α-Al2O3)",
+      "formula": "Al2O3",
+      "apelidos": ["alumina", "oxido de aluminio", "corindon"],
+      "estado": "solido",
+      "modulos": ["compositos", "polimeros", "ceramica"],
+      "densidade_g_cm3": 3.95,
+      "massa_molar_g_mol": 101.961,
+      "pureza_padrao_pct": 99.8,
+      "alertas": ["secar_estufa"],
+      "fonte": "CRC Handbook (fase alfa)",
+      "especifico": {
+        "polimeros": { "papel": "carga" }
+      }
+    },
+    {
+      "id": "tio2_anatase",
+      "nome": "Dióxido de Titânio (Anatase)",
+      "formula": "TiO2",
+      "apelidos": ["titania", "oxido de titanio"],
+      "estado": "solido",
+      "modulos": ["compositos", "polimeros", "ceramica"],
+      "densidade_g_cm3": 3.89,
+      "massa_molar_g_mol": 79.866,
+      "pureza_padrao_pct": 99.5,
+      "alertas": [],
+      "fonte": "CRC Handbook (fase anatase)",
+      "especifico": {
+        "polimeros": { "papel": "carga" }
+      }
+    },
+    {
+      "id": "silica_fumada",
+      "nome": "Sílica Fumada / Amorfa (SiO2)",
+      "formula": "SiO2",
+      "apelidos": ["silica", "aerosil", "sio2"],
+      "estado": "solido",
+      "modulos": ["compositos", "polimeros", "ceramica"],
+      "densidade_g_cm3": 2.20,
+      "massa_molar_g_mol": 60.084,
+      "pureza_padrao_pct": 99.8,
+      "alertas": ["po_fino_mascara", "higroscopico"],
+      "fonte": "CRC Handbook (SiO2 amorfa)",
+      "especifico": {
+        "polimeros": { "papel": "carga" }
+      }
+    },
+    {
+      "id": "talco_mineral",
+      "nome": "Talco Mineral (carga)",
+      "formula": "Mg3Si4O10(OH)2",
+      "apelidos": ["talco", "silicato de magnesio"],
+      "estado": "solido",
+      "modulos": ["compositos", "polimeros"],
+      "densidade_g_cm3": 2.75,
+      "massa_molar_g_mol": 379.27,
+      "pureza_padrao_pct": 99.0,
+      "alertas": [],
+      "fonte": "Referência mineralógica",
+      "especifico": {
+        "polimeros": { "papel": "carga" }
+      }
+    },
+    {
+      "id": "caco3_calcita",
+      "nome": "Carbonato de Cálcio (CaCO3)",
+      "formula": "CaCO3",
+      "apelidos": ["calcita", "carbonato de calcio", "carga mineral"],
+      "estado": "solido",
+      "modulos": ["compositos", "polimeros", "ceramica"],
+      "densidade_g_cm3": 2.71,
+      "massa_molar_g_mol": 100.087,
+      "pureza_padrao_pct": 99.0,
+      "alertas": [],
+      "fonte": "CRC Handbook",
+      "especifico": {
+        "polimeros": { "papel": "carga" }
+      }
+    }
+  ]
+}
