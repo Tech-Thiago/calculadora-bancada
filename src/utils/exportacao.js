@@ -32,11 +32,32 @@ export function formatarResolucaoBalanca(resolucao) {
 }
 
 /**
- * Exporta formulação em CSV compatível com Excel em português (separador ";" e BOM UTF-8).
+ * Calcula o desvio percentual entre a massa real pesada e a massa teórica.
  */
-export function exportarCSV(payload, opcoes = {}) {
+export function calcularDesvioMassa(massaTeoricaG, massaRealRaw) {
+  if (!(typeof massaTeoricaG === "number" && massaTeoricaG > 0)) return null;
+  if (massaRealRaw === undefined || massaRealRaw === null || String(massaRealRaw).trim() === "") {
+    return null;
+  }
+
+  const massaRealG = Number(String(massaRealRaw).trim().replace(",", "."));
+  if (!Number.isFinite(massaRealG) || massaRealG < 0) return null;
+
+  const desvioPct = ((massaRealG - massaTeoricaG) / massaTeoricaG) * 100;
+  return {
+    massaRealG,
+    desvioPct,
+    dentroTolerancia: Math.abs(desvioPct) <= 1,
+  };
+}
+
+/**
+ * Gera conteúdo CSV compatível com Excel em português (separador ";" e BOM UTF-8).
+ */
+export function gerarConteudoCSV(payload, opcoes = {}) {
   const meta = normalizarMetaFicha(opcoes.metaFicha ?? payload.metaFicha);
   const resolucao = normalizarResolucao(opcoes.resolucaoBalanca ?? payload.resolucaoBalanca);
+  const massasReais = opcoes.massasReais || {};
 
   const cabecalhoMeta = [
     [escaparCsv("Título"), escaparCsv(payload.titulo || "")].join(";"),
@@ -48,25 +69,38 @@ export function exportarCSV(payload, opcoes = {}) {
     [escaparCsv("Data de emissão"), escaparCsv(new Date().toLocaleString("pt-BR"))].join(";"),
   ];
 
-  const cabecalho = ["Item", "Quantidade", "Detalhes", "Alertas"];
+  const cabecalho = ["Item", "Quantidade", "Massa Real (g)", "Desvio (%)", "Detalhes", "Alertas"];
   const linhas = payload.itens.map((item) => {
     const valor = item.valorDisplay ?? `${Number(item.massaG).toFixed(4)} g`;
+    const desvio = calcularDesvioMassa(item.massaG, massasReais[item.id]);
+    const massaRealStr = desvio ? desvio.massaRealG.toFixed(4) : "";
+    const desvioStr = desvio
+      ? `${desvio.desvioPct >= 0 ? "+" : ""}${desvio.desvioPct.toFixed(2)}%`
+      : "";
     const alertas = item.alertas?.length ? item.alertas.join(" | ") : "";
     return [
       escaparCsv(item.nome),
       escaparCsv(valor),
+      escaparCsv(massaRealStr),
+      escaparCsv(desvioStr),
       escaparCsv(item.detalhe),
       escaparCsv(alertas),
     ].join(";");
   });
 
-  const csv = [
+  return [
     ...cabecalhoMeta,
     "",
     cabecalho.join(";"),
     ...linhas,
   ].join("\r\n");
+}
 
+/**
+ * Exporta formulação em CSV compatível com Excel em português (separador ";" e BOM UTF-8).
+ */
+export function exportarCSV(payload, opcoes = {}) {
+  const csv = gerarConteudoCSV(payload, opcoes);
   const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
