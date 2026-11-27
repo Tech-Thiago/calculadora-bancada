@@ -65,4 +65,84 @@ describe("formulaParser e calculoCeramica", () => {
     expect(tio2.massaPesarG).toBeCloseTo(3.2480, 3);
     expect(fe2o3.massaPesarG).toBeCloseTo(0.1709, 3);
   });
+
+  test("parseFormula interpreta hidrato Ca(NO3)2·4H2O corretamente", () => {
+    // Ca (40.078) + 2*N (28.014) + 10*O (159.99) + 8*H (8.064) = 236.146 g/mol
+    const res = parseFormula("Ca(NO3)2·4H2O");
+    expect(res.valido).toBe(true);
+    expect(res.elementos).toEqual({ Ca: 1, N: 2, O: 10, H: 8 });
+    expect(res.massaMolar).toBeCloseTo(236.146, 3);
+  });
+
+  test("parseFormula interpreta parenteses e colchetes aninhados", () => {
+    // Mg(Al(OH)4)2: Mg (24.305) + 2*Al (53.964) + 8*O (127.992) + 8*H (8.064) = 214.325 g/mol
+    const hidroxido = parseFormula("Mg(Al(OH)4)2");
+    expect(hidroxido.valido).toBe(true);
+    expect(hidroxido.elementos).toEqual({ Mg: 1, Al: 2, O: 8, H: 8 });
+    expect(hidroxido.massaMolar).toBeCloseTo(214.325, 3);
+
+    // K4[Fe(CN)6]: 4*K (156.392) + Fe (55.845) + 6*C (72.066) + 6*N (84.042) = 368.345 g/mol
+    const ferrocianeto = parseFormula("K4[Fe(CN)6]");
+    expect(ferrocianeto.valido).toBe(true);
+    expect(ferrocianeto.elementos).toEqual({ K: 4, Fe: 1, C: 6, N: 6 });
+    expect(ferrocianeto.massaMolar).toBeCloseTo(368.345, 3);
+  });
+
+  test("parseFormula distingue elementos de duas letras de elementos de uma letra (Co vs C)", () => {
+    // CoCO3: Co (58.933) + C (12.011) + 3*O (47.997) = 118.941 g/mol
+    const carbonato = parseFormula("CoCO3");
+    expect(carbonato.valido).toBe(true);
+    expect(carbonato.elementos).toEqual({ Co: 1, C: 1, O: 3 });
+    expect(carbonato.massaMolar).toBeCloseTo(118.941, 3);
+
+    const oxidoCobalto = parseFormula("CoO");
+    const monoxidoCarbono = parseFormula("CO");
+    expect(oxidoCobalto.valido).toBe(true);
+    expect(oxidoCobalto.elementos.Co).toBe(1);
+    expect("C" in oxidoCobalto.elementos).toBe(false);
+    expect(monoxidoCarbono.valido).toBe(true);
+    expect(monoxidoCarbono.elementos.C).toBe(1);
+    expect("Co" in monoxidoCarbono.elementos).toBe(false);
+  });
+
+  test("calcularSinteseCeramica retorna erro quando precursor nao contem o cation esperado", () => {
+    const res = calcularSinteseCeramica({
+      formulaAlvo: "BaTiO3",
+      massaAlvoG: 10,
+      perdaPct: 0,
+      precursores: [
+        { cation: "Ba", formula: "CaCO3", nome: "Precursor errado", purezaPct: 99 },
+        { cation: "Ti", formula: "TiO2", nome: "Dioxido de Titanio", purezaPct: 99.5 },
+      ],
+    });
+
+    expect(res.valido).toBe(false);
+    expect(res.erro).toContain("não contém o cátion Ba");
+  });
+
+  test("calcularSinteseCeramica retorna erro com pureza fora do intervalo (0 ou >100%)", () => {
+    const resZero = calcularSinteseCeramica({
+      formulaAlvo: "BaTiO3",
+      massaAlvoG: 10,
+      perdaPct: 0,
+      precursores: [
+        { cation: "Ba", formula: "BaCO3", nome: "Carbonato de Bario", purezaPct: 0 },
+        { cation: "Ti", formula: "TiO2", nome: "Dioxido de Titanio", purezaPct: 99.5 },
+      ],
+    });
+    expect(resZero.valido).toBe(false);
+    expect(resZero.erro).toContain("Pureza inválida");
+
+    const resAcima = calcularSinteseCeramica({
+      formulaAlvo: "BaTiO3",
+      massaAlvoG: 10,
+      perdaPct: 0,
+      precursores: [
+        { cation: "Ba", formula: "BaCO3", nome: "Carbonato de Bario", purezaPct: 105 },
+        { cation: "Ti", formula: "TiO2", nome: "Dioxido de Titanio", purezaPct: 99.5 },
+      ],
+    });
+    expect(resAcima.valido).toBe(false);
+    expect(resAcima.erro).toContain("Pureza inválida");
+  });
 });

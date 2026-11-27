@@ -102,4 +102,76 @@ describe("polimeros, solucoes e metais", () => {
     expect(res.itens[0].massaPesarG).toBeCloseTo(48.7567, 3);
     expect(res.itens[1].massaPesarG).toBeCloseTo(51.2433, 3);
   });
+
+  test("calcularDiluicao retorna erro com unidades incompativeis (M e g/L)", () => {
+    const res = calcularDiluicao({
+      c1: 1.0,
+      unidadeC1: "M",
+      c2: 10,
+      unidadeC2: "g/L",
+      v2: 100,
+      unidadeV2: "mL",
+    });
+
+    expect(res.valido).toBe(false);
+    expect(res.erro).toContain("incompatíveis");
+  });
+
+  test("calcularSolucaoLiquido retorna erro quando concentracao alvo excede molaridade do estoque", () => {
+    const res = calcularSolucaoLiquido({
+      formula: "HCl",
+      nome: "Acido Cloridrico P.A.",
+      purezaPct: 37,
+      densidade: 1.19,
+      concentracao: 15,
+      unidadeConc: "M",
+      volume: 250,
+      unidadeVol: "mL",
+      acidoForte: true,
+    });
+
+    expect(res.valido).toBe(false);
+    expect(res.erro).toContain("maior que a do reagente estoque");
+  });
+
+  test("calcularLigaMetalica retorna erro quando a soma das fracoes nao fecha em 100%", () => {
+    const res = calcularLigaMetalica({
+      modoEntrada: "at",
+      massaAlvoG: 100,
+      perdaPct: 0,
+      elementos: [
+        { id: "1", simbolo: "Fe", fracaoPct: "50", purezaPct: "100", rendimentoPct: "100" },
+        { id: "2", simbolo: "Ni", fracaoPct: "30", purezaPct: "100", rendimentoPct: "100" },
+      ],
+    });
+
+    expect(res.valido).toBe(false);
+    expect(res.erro).toContain("100%");
+  });
+
+  test("calcularLigaMetalica retorna erro com pureza invalida (0% ou >100%)", () => {
+    const resZero = calcularLigaMetalica({
+      modoEntrada: "at",
+      massaAlvoG: 100,
+      perdaPct: 0,
+      elementos: [
+        { id: "1", simbolo: "Fe", fracaoPct: "50", purezaPct: "0", rendimentoPct: "100" },
+        { id: "2", simbolo: "Ni", fracaoPct: "50", purezaPct: "100", rendimentoPct: "100" },
+      ],
+    });
+    expect(resZero.valido).toBe(false);
+    expect(resZero.erro).toContain("Pureza");
+
+    const resAcima = calcularLigaMetalica({
+      modoEntrada: "at",
+      massaAlvoG: 100,
+      perdaPct: 0,
+      elementos: [
+        { id: "1", simbolo: "Fe", fracaoPct: "50", purezaPct: "105", rendimentoPct: "100" },
+        { id: "2", simbolo: "Ni", fracaoPct: "50", purezaPct: "100", rendimentoPct: "100" },
+      ],
+    });
+    expect(resAcima.valido).toBe(false);
+    expect(resAcima.erro).toContain("Pureza");
+  });
 });

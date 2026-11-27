@@ -54,4 +54,32 @@ describe("calculoCompositos", () => {
     expect(res.itens[0].massaG).toBeCloseTo(37.95, 3);
     expect(res.itens[1].massaG).toBeCloseTo(58.30, 3);
   });
+
+  test("calcularComposito retorna erro quando a soma das fracoes nao fecha em 100%", () => {
+    const resMenor = calcularComposito({
+      modoEntrada: "wt",
+      alvoTipo: "massa",
+      alvoValor: 100,
+      perdaPct: 0,
+      componentes: [
+        { id: "1", nome: "Epoxi", densidade: 1.2, fracaoPct: 60 },
+        { id: "2", nome: "Fibra de Vidro", densidade: 2.5, fracaoPct: 25 },
+      ],
+    });
+    expect(resMenor.valido).toBe(false);
+    expect(resMenor.erro).toContain("100%");
+
+    const resMaior = calcularComposito({
+      modoEntrada: "wt",
+      alvoTipo: "massa",
+      alvoValor: 100,
+      perdaPct: 0,
+      componentes: [
+        { id: "1", nome: "Epoxi", densidade: 1.2, fracaoPct: 70 },
+        { id: "2", nome: "Fibra de Vidro", densidade: 2.5, fracaoPct: 40 },
+      ],
+    });
+    expect(resMaior.valido).toBe(false);
+    expect(resMaior.erro).toContain("100%");
+  });
 });
