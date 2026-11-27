@@ -249,7 +249,7 @@ export default function PainelDados({ onFechar, onAbrirHistorico }) {
                 <div className="flex gap-2">
                   <input
                     type="text"
-                    placeholder="Ex: Citric acid, BaCO3, Titanium dioxide, NaOH..."
+                    placeholder="Ex: Ácido cítrico, Hidróxido de sódio, Cobre, BaCO3..."
                     value={termoPubChem}
                     onChange={(e) => setTermoPubChem(e.target.value)}
                     className="w-full rounded-xl bg-white dark:bg-[#0b0d12] border border-slate-200 dark:border-white/10 px-3.5 py-2 text-sm"
@@ -287,6 +287,11 @@ export default function PainelDados({ onFechar, onAbrirHistorico }) {
                     <div className="text-slate-500 dark:text-slate-400">
                       MM: <strong className="font-mono">{resultadoPubChem.massa_molar_g_mol} g/mol</strong>
                       {resultadoPubChem.nomeIupac ? ` · IUPAC: ${resultadoPubChem.nomeIupac}` : ""}
+                    </div>
+                    <div className="text-[11px] text-indigo-600 dark:text-indigo-300">
+                      {resultadoPubChem.traduzido
+                        ? `Buscado no PubChem como "${resultadoPubChem.termoBuscado}" (de "${resultadoPubChem.termoOriginal}").`
+                        : `Termo consultado no PubChem: "${resultadoPubChem.termoBuscado}".`}
                     </div>
                     <div className="text-[11px] text-emerald-600 dark:text-emerald-400">
                       Campos preenchidos abaixo. Se tiver a densidade/pureza do rótulo, complete e clique em Salvar.
