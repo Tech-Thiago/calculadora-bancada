@@ -6,6 +6,7 @@ import {
   calcularSolucaoLiquido,
   calcularDiluicao,
 } from "../utils/calculoSolucoes";
+import FormulaQuimica from "../components/FormulaQuimica";
 import { TEMAS_MODULO } from "../utils/temaModulos";
 
 const tema = TEMAS_MODULO.solucoes;
@@ -183,7 +184,14 @@ export default function ModuloSolucoes({ onAbrirModoBalanca }) {
       {submodo === "solido" && (
         <div className="grid grid-cols-1 xl:grid-cols-12 gap-5 items-start">
           <section className="xl:col-span-7 bg-white p-6 space-y-5">
-            <h3 className="text-sm font-bold text-slate-900">Dados do soluto sólido</h3>
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <h3 className="text-sm font-bold text-slate-900">Dados do soluto sólido</h3>
+              {solido.formula.trim() && (
+                <span className={`text-xs font-mono font-bold px-2.5 py-1 rounded-full border ${tema.headerBadge}`}>
+                  <FormulaQuimica formula={solido.formula} />
+                </span>
+              )}
+            </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-12 gap-4">
               <div className="sm:col-span-7">
@@ -294,7 +302,7 @@ export default function ModuloSolucoes({ onAbrirModoBalanca }) {
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Resultado</span>
                   <span className={`text-[11px] font-mono font-semibold px-2.5 py-1 rounded-full border ${tema.headerBadge}`}>
-                    {resSolido.formula}
+                    <FormulaQuimica formula={resSolido.formula} />
                   </span>
                 </div>
 
@@ -359,7 +367,14 @@ export default function ModuloSolucoes({ onAbrirModoBalanca }) {
       {submodo === "liquido" && (
         <div className="grid grid-cols-1 xl:grid-cols-12 gap-5 items-start">
           <section className="xl:col-span-7 bg-white p-6 space-y-5">
-            <h3 className="text-sm font-bold text-slate-900">Dados do líquido concentrado (P.A.)</h3>
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <h3 className="text-sm font-bold text-slate-900">Dados do líquido concentrado (P.A.)</h3>
+              {liquido.formula.trim() && (
+                <span className={`text-xs font-mono font-bold px-2.5 py-1 rounded-full border ${tema.headerBadge}`}>
+                  <FormulaQuimica formula={liquido.formula} />
+                </span>
+              )}
+            </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-12 gap-4">
               <div className="sm:col-span-7">
@@ -472,7 +487,7 @@ export default function ModuloSolucoes({ onAbrirModoBalanca }) {
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Resultado</span>
                   <span className={`text-[11px] font-mono font-semibold px-2.5 py-1 rounded-full border ${tema.headerBadge}`}>
-                    {resLiquido.formula}
+                    <FormulaQuimica formula={resLiquido.formula} />
                   </span>
                 </div>
 

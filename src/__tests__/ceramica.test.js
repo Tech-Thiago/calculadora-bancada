@@ -1,6 +1,7 @@
 ﻿import { describe, expect, test } from "vitest";
 import { parseFormula } from "../utils/formulaParser";
 import { calcularSinteseCeramica } from "../utils/calculoCeramica";
+import { tokenizarFormulaQuimica } from "../components/FormulaQuimica";
 
 describe("formulaParser e calculoCeramica", () => {
   test("parseFormula calcula massa molar de BaTiO3 conferida na mao", () => {
@@ -144,5 +145,35 @@ describe("formulaParser e calculoCeramica", () => {
     });
     expect(resAcima.valido).toBe(false);
     expect(resAcima.erro).toContain("Pureza inválida");
+  });
+
+  test("tokenizarFormulaQuimica separa subscritos e coeficientes multiplicadores", () => {
+    expect(tokenizarFormulaQuimica("Ba0.85Ca0.15TiO3")).toEqual([
+      { tipo: "texto", valor: "Ba" },
+      { tipo: "sub", valor: "0.85" },
+      { tipo: "texto", valor: "Ca" },
+      { tipo: "sub", valor: "0.15" },
+      { tipo: "texto", valor: "TiO" },
+      { tipo: "sub", valor: "3" },
+    ]);
+
+    expect(tokenizarFormulaQuimica("Ca(NO3)2·4H2O")).toEqual([
+      { tipo: "texto", valor: "Ca(NO" },
+      { tipo: "sub", valor: "3" },
+      { tipo: "texto", valor: ")" },
+      { tipo: "sub", valor: "2" },
+      { tipo: "texto", valor: "·" },
+      { tipo: "texto", valor: "4" },
+      { tipo: "texto", valor: "H" },
+      { tipo: "sub", valor: "2" },
+      { tipo: "texto", valor: "O" },
+    ]);
+
+    expect(tokenizarFormulaQuimica("H2SO4")).toEqual([
+      { tipo: "texto", valor: "H" },
+      { tipo: "sub", valor: "2" },
+      { tipo: "texto", valor: "SO" },
+      { tipo: "sub", valor: "4" },
+    ]);
   });
 });

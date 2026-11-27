@@ -5,6 +5,7 @@ import { parseFormula } from "../utils/formulaParser";
 import { calcularSinteseCeramica } from "../utils/calculoCeramica";
 import AutocompleteInput from "../components/AutocompleteInput";
 import BarraProporcao from "../components/BarraProporcao";
+import FormulaQuimica from "../components/FormulaQuimica";
 import { TEMAS_MODULO } from "../utils/temaModulos";
 
 const tema = TEMAS_MODULO.ceramica;
@@ -151,7 +152,14 @@ export default function ModuloCeramica({ onAbrirModoBalanca }) {
       {/* COLUNA ESQUERDA */}
       <div className="xl:col-span-7 space-y-5">
         <section className="bg-white p-6 space-y-5">
-          <h3 className="text-sm font-bold text-slate-900">Fase cerâmica alvo</h3>
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <h3 className="text-sm font-bold text-slate-900">Fase cerâmica alvo</h3>
+            {formulaAlvo.trim() && (
+              <span className={`text-xs font-mono font-bold px-2.5 py-1 rounded-full border ${tema.headerBadge}`}>
+                <FormulaQuimica formula={formulaAlvo} />
+              </span>
+            )}
+          </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-12 gap-4">
             <div className="sm:col-span-6">
@@ -194,19 +202,22 @@ export default function ModuloCeramica({ onAbrirModoBalanca }) {
 
           <div className="flex flex-wrap items-center gap-1.5 pt-1">
             <span className="text-xs font-medium text-slate-400 mr-1">Exemplos:</span>
-            {EXEMPLOS_CERAMICA.map((ex) => (
-              <button
-                key={ex.formula}
-                type="button"
-                onClick={() => {
-                  setFormulaAlvo(ex.formula);
-                  setMassaAlvoG(ex.massa);
-                }}
-                className={`px-3 py-1 rounded-full text-xs font-medium bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-300 transition cursor-pointer ${tema.chipHover}`}
-              >
-                {ex.nome}
-              </button>
-            ))}
+            {EXEMPLOS_CERAMICA.map((ex) => {
+              const rotuloBase = ex.nome.replace(/\s*\([^)]*\)$/, "");
+              return (
+                <button
+                  key={ex.formula}
+                  type="button"
+                  onClick={() => {
+                    setFormulaAlvo(ex.formula);
+                    setMassaAlvoG(ex.massa);
+                  }}
+                  className={`px-3 py-1 rounded-full text-xs font-medium bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-300 transition cursor-pointer ${tema.chipHover}`}
+                >
+                  {rotuloBase} (<FormulaQuimica formula={ex.formula} className="font-mono" />)
+                </button>
+              );
+            })}
           </div>
         </section>
 
@@ -408,7 +419,7 @@ export default function ModuloCeramica({ onAbrirModoBalanca }) {
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Estequiometria</span>
               <span className={`text-[11px] font-mono font-semibold px-2.5 py-1 rounded-full border ${tema.headerBadge}`}>
-                {formulaAlvo}
+                <FormulaQuimica formula={formulaAlvo} />
               </span>
             </div>
 
@@ -454,7 +465,7 @@ export default function ModuloCeramica({ onAbrirModoBalanca }) {
                 >
                   <div className="min-w-0">
                     <div className="text-sm font-bold text-slate-900 truncate">
-                      <span className={`font-mono ${tema.valorItem}`}>{item.formula}</span> · {item.nome}
+                      <FormulaQuimica formula={item.formula} className={`font-mono ${tema.valorItem}`} /> · {item.nome}
                       {item.ehDopante && (
                         <span className={`ml-1.5 text-[10px] font-bold uppercase px-2 py-0.5 rounded-full border ${tema.headerBadge}`}>
                           Dopante
