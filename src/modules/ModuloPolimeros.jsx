@@ -5,6 +5,7 @@ import BarraProporcao from "../components/BarraProporcao";
 import AtalhosEscala from "../components/AtalhosEscala";
 import InputStepper from "../components/InputStepper";
 import { TEMAS_MODULO } from "../utils/temaModulos";
+import { parseNumeroBr, sanitizarNumeroDecimal } from "../utils/numeroInput";
 
 const tema = TEMAS_MODULO.polimeros;
 
@@ -61,18 +62,23 @@ export default function ModuloPolimeros({ onAbrirModoBalanca }) {
       calcularPolimero({
         modo,
         resinaNome,
-        resinaPureza,
-        resinaDensidade,
+        resinaPureza: parseNumeroBr(resinaPureza, 0),
+        resinaDensidade: parseNumeroBr(resinaDensidade, 0),
         endurecedorNome,
-        endurecedorPureza,
-        endurecedorDensidade,
-        eew,
-        ahew,
-        phrManual,
-        massaAlvoG,
+        endurecedorPureza: parseNumeroBr(endurecedorPureza, 0),
+        endurecedorDensidade: parseNumeroBr(endurecedorDensidade, 0),
+        eew: parseNumeroBr(eew, 0),
+        ahew: parseNumeroBr(ahew, 0),
+        phrManual: parseNumeroBr(phrManual, 0),
+        massaAlvoG: parseNumeroBr(massaAlvoG, 0),
         alvoTipo,
-        perdaPct,
-        aditivos,
+        perdaPct: parseNumeroBr(perdaPct, 0),
+        aditivos: aditivos.map((ad) => ({
+          ...ad,
+          phr: parseNumeroBr(ad.phr, 0),
+          purezaPct: parseNumeroBr(ad.purezaPct, 100),
+          densidade: parseNumeroBr(ad.densidade, 0),
+        })),
       }),
     [
       modo,
@@ -157,25 +163,20 @@ export default function ModuloPolimeros({ onAbrirModoBalanca }) {
             <div className="sm:col-span-3">
               <label className="block text-[11px] font-semibold text-slate-500 mb-1.5">Pureza (%)</label>
               <input
-                type="number"
+                type="text"
                 inputMode="decimal"
-                step="any"
-                min="0.1"
-                max="100"
                 value={resinaPureza}
-                onChange={(e) => setResinaPureza(e.target.value)}
+                onChange={(e) => setResinaPureza(sanitizarNumeroDecimal(e.target.value))}
                 className="w-full px-3 py-2.5 text-sm font-mono font-semibold"
               />
             </div>
             <div className="sm:col-span-3">
               <label className="block text-[11px] font-semibold text-slate-500 mb-1.5">ρ (g/cm³)</label>
               <input
-                type="number"
+                type="text"
                 inputMode="decimal"
-                step="any"
-                min="0"
                 value={resinaDensidade}
-                onChange={(e) => setResinaDensidade(e.target.value)}
+                onChange={(e) => setResinaDensidade(sanitizarNumeroDecimal(e.target.value))}
                 className="w-full px-3 py-2.5 text-sm font-mono font-semibold"
               />
             </div>
@@ -195,25 +196,20 @@ export default function ModuloPolimeros({ onAbrirModoBalanca }) {
             <div className="sm:col-span-3">
               <label className="block text-[11px] font-semibold text-slate-500 mb-1.5">Pureza (%)</label>
               <input
-                type="number"
+                type="text"
                 inputMode="decimal"
-                step="any"
-                min="0.1"
-                max="100"
                 value={endurecedorPureza}
-                onChange={(e) => setEndurecedorPureza(e.target.value)}
+                onChange={(e) => setEndurecedorPureza(sanitizarNumeroDecimal(e.target.value))}
                 className="w-full px-3 py-2.5 text-sm font-mono font-semibold"
               />
             </div>
             <div className="sm:col-span-3">
               <label className="block text-[11px] font-semibold text-slate-500 mb-1.5">ρ (g/cm³)</label>
               <input
-                type="number"
+                type="text"
                 inputMode="decimal"
-                step="any"
-                min="0"
                 value={endurecedorDensidade}
-                onChange={(e) => setEndurecedorDensidade(e.target.value)}
+                onChange={(e) => setEndurecedorDensidade(sanitizarNumeroDecimal(e.target.value))}
                 className="w-full px-3 py-2.5 text-sm font-mono font-semibold"
               />
             </div>
@@ -224,24 +220,20 @@ export default function ModuloPolimeros({ onAbrirModoBalanca }) {
               <div>
                 <label className="block text-xs font-semibold text-slate-500 mb-1.5">EEW da resina (g/eq)</label>
                 <input
-                  type="number"
+                  type="text"
                   inputMode="decimal"
-                  step="any"
-                  min="1"
                   value={eew}
-                  onChange={(e) => setEew(e.target.value)}
+                  onChange={(e) => setEew(sanitizarNumeroDecimal(e.target.value))}
                   className="w-full px-3.5 py-2.5 text-sm font-mono font-semibold"
                 />
               </div>
               <div>
                 <label className="block text-xs font-semibold text-slate-500 mb-1.5">AHEW do endurecedor (g/eq)</label>
                 <input
-                  type="number"
+                  type="text"
                   inputMode="decimal"
-                  step="any"
-                  min="1"
                   value={ahew}
-                  onChange={(e) => setAhew(e.target.value)}
+                  onChange={(e) => setAhew(sanitizarNumeroDecimal(e.target.value))}
                   className="w-full px-3.5 py-2.5 text-sm font-mono font-semibold"
                 />
               </div>
@@ -252,12 +244,10 @@ export default function ModuloPolimeros({ onAbrirModoBalanca }) {
                 Proporção do endurecedor (phr — partes por 100 de resina)
               </label>
               <input
-                type="number"
+                type="text"
                 inputMode="decimal"
-                step="any"
-                min="0"
                 value={phrManual}
-                onChange={(e) => setPhrManual(e.target.value)}
+                onChange={(e) => setPhrManual(sanitizarNumeroDecimal(e.target.value))}
                 className="w-full px-3.5 py-2.5 text-sm font-mono font-semibold"
               />
             </div>
@@ -278,12 +268,10 @@ export default function ModuloPolimeros({ onAbrirModoBalanca }) {
             <div>
               <label className="block text-xs font-semibold text-slate-500 mb-1.5">Massa alvo (g)</label>
               <input
-                type="number"
+                type="text"
                 inputMode="decimal"
-                step="any"
-                min="0"
                 value={massaAlvoG}
-                onChange={(e) => setMassaAlvoG(e.target.value)}
+                onChange={(e) => setMassaAlvoG(sanitizarNumeroDecimal(e.target.value))}
                 className="w-full px-3.5 py-2.5 text-sm font-mono font-semibold"
               />
               <AtalhosEscala
@@ -354,37 +342,36 @@ export default function ModuloPolimeros({ onAbrirModoBalanca }) {
                   <div className="sm:col-span-2">
                     <label className="block text-[11px] font-semibold text-slate-500 mb-1.5">phr</label>
                     <input
-                      type="number"
+                      type="text"
                       inputMode="decimal"
-                      step="any"
-                      min="0"
                       value={ad.phr}
-                      onChange={(e) => atualizarAditivo(ad.id, "phr", e.target.value)}
+                      onChange={(e) =>
+                        atualizarAditivo(ad.id, "phr", sanitizarNumeroDecimal(e.target.value))
+                      }
                       className="w-full px-2.5 py-2 text-sm font-mono font-bold"
                     />
                   </div>
                   <div className="sm:col-span-2">
                     <label className="block text-[11px] font-semibold text-slate-500 mb-1.5">Pur. (%)</label>
                     <input
-                      type="number"
+                      type="text"
                       inputMode="decimal"
-                      step="any"
-                      min="0.1"
-                      max="100"
                       value={ad.purezaPct}
-                      onChange={(e) => atualizarAditivo(ad.id, "purezaPct", e.target.value)}
+                      onChange={(e) =>
+                        atualizarAditivo(ad.id, "purezaPct", sanitizarNumeroDecimal(e.target.value))
+                      }
                       className="w-full px-2.5 py-2 text-sm font-mono"
                     />
                   </div>
                   <div className="sm:col-span-2">
                     <label className="block text-[11px] font-semibold text-slate-500 mb-1.5">ρ (g/cm³)</label>
                     <input
-                      type="number"
+                      type="text"
                       inputMode="decimal"
-                      step="any"
-                      min="0"
                       value={ad.densidade}
-                      onChange={(e) => atualizarAditivo(ad.id, "densidade", e.target.value)}
+                      onChange={(e) =>
+                        atualizarAditivo(ad.id, "densidade", sanitizarNumeroDecimal(e.target.value))
+                      }
                       className="w-full px-2.5 py-2 text-sm font-mono"
                     />
                   </div>

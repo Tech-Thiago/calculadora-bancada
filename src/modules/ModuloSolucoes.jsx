@@ -10,6 +10,7 @@ import FormulaQuimica from "../components/FormulaQuimica";
 import AtalhosEscala from "../components/AtalhosEscala";
 import BalaoVolumetricoSvg from "../components/BalaoVolumetricoSvg";
 import { TEMAS_MODULO } from "../utils/temaModulos";
+import { parseNumeroBr, sanitizarNumeroDecimal } from "../utils/numeroInput";
 
 const tema = TEMAS_MODULO.solucoes;
 
@@ -50,9 +51,37 @@ export default function ModuloSolucoes({ onAbrirModoBalanca }) {
     unidadeV2: "mL",
   });
 
-  const resSolido = useMemo(() => calcularSolucaoSolido(solido), [solido]);
-  const resLiquido = useMemo(() => calcularSolucaoLiquido(liquido), [liquido]);
-  const resDiluicao = useMemo(() => calcularDiluicao(diluicao), [diluicao]);
+  const resSolido = useMemo(
+    () =>
+      calcularSolucaoSolido({
+        ...solido,
+        concentracao: parseNumeroBr(solido.concentracao, 0),
+        volume: parseNumeroBr(solido.volume, 0),
+        purezaPct: parseNumeroBr(solido.purezaPct, 0),
+      }),
+    [solido]
+  );
+  const resLiquido = useMemo(
+    () =>
+      calcularSolucaoLiquido({
+        ...liquido,
+        purezaPct: parseNumeroBr(liquido.purezaPct, 0),
+        densidade: parseNumeroBr(liquido.densidade, 0),
+        concentracao: parseNumeroBr(liquido.concentracao, 0),
+        volume: parseNumeroBr(liquido.volume, 0),
+      }),
+    [liquido]
+  );
+  const resDiluicao = useMemo(
+    () =>
+      calcularDiluicao({
+        ...diluicao,
+        c1: parseNumeroBr(diluicao.c1, 0),
+        c2: parseNumeroBr(diluicao.c2, 0),
+        v2: parseNumeroBr(diluicao.v2, 0),
+      }),
+    [diluicao]
+  );
 
   function selecionarSolidoPreset(formula) {
     const achado = SOLIDOS_SOLUCOES.find((s) => s.formula === formula);
@@ -235,13 +264,15 @@ export default function ModuloSolucoes({ onAbrirModoBalanca }) {
               <div className="sm:col-span-4">
                 <label className="block text-xs font-semibold text-slate-500 mb-1.5">Pureza (%)</label>
                 <input
-                  type="number"
+                  type="text"
                   inputMode="decimal"
-                  step="any"
-                  min="0.1"
-                  max="100"
                   value={solido.purezaPct}
-                  onChange={(e) => setSolido((p) => ({ ...p, purezaPct: e.target.value }))}
+                  onChange={(e) =>
+                    setSolido((p) => ({
+                      ...p,
+                      purezaPct: sanitizarNumeroDecimal(e.target.value),
+                    }))
+                  }
                   className="w-full px-3.5 py-2.5 text-sm font-mono font-semibold"
                 />
               </div>
@@ -250,12 +281,15 @@ export default function ModuloSolucoes({ onAbrirModoBalanca }) {
                 <label className="block text-xs font-semibold text-slate-500 mb-1.5">Concentração desejada</label>
                 <div className="flex gap-2">
                   <input
-                    type="number"
+                    type="text"
                     inputMode="decimal"
-                    step="any"
-                    min="0"
                     value={solido.concentracao}
-                    onChange={(e) => setSolido((p) => ({ ...p, concentracao: e.target.value }))}
+                    onChange={(e) =>
+                      setSolido((p) => ({
+                        ...p,
+                        concentracao: sanitizarNumeroDecimal(e.target.value),
+                      }))
+                    }
                     className="w-full px-3.5 py-2.5 text-sm font-mono font-semibold"
                   />
                   <select
@@ -276,12 +310,15 @@ export default function ModuloSolucoes({ onAbrirModoBalanca }) {
                 <label className="block text-xs font-semibold text-slate-500 mb-1.5">Volume final</label>
                 <div className="flex gap-2">
                   <input
-                    type="number"
+                    type="text"
                     inputMode="decimal"
-                    step="any"
-                    min="0"
                     value={solido.volume}
-                    onChange={(e) => setSolido((p) => ({ ...p, volume: e.target.value }))}
+                    onChange={(e) =>
+                      setSolido((p) => ({
+                        ...p,
+                        volume: sanitizarNumeroDecimal(e.target.value),
+                      }))
+                    }
                     className="w-full px-3.5 py-2.5 text-sm font-mono font-semibold"
                   />
                   <select
@@ -419,13 +456,15 @@ export default function ModuloSolucoes({ onAbrirModoBalanca }) {
               <div className="sm:col-span-6">
                 <label className="block text-xs font-semibold text-slate-500 mb-1.5">Pureza (% m/m)</label>
                 <input
-                  type="number"
+                  type="text"
                   inputMode="decimal"
-                  step="any"
-                  min="0.1"
-                  max="100"
                   value={liquido.purezaPct}
-                  onChange={(e) => setLiquido((p) => ({ ...p, purezaPct: e.target.value }))}
+                  onChange={(e) =>
+                    setLiquido((p) => ({
+                      ...p,
+                      purezaPct: sanitizarNumeroDecimal(e.target.value),
+                    }))
+                  }
                   className="w-full px-3.5 py-2.5 text-sm font-mono font-semibold"
                 />
               </div>
@@ -433,12 +472,15 @@ export default function ModuloSolucoes({ onAbrirModoBalanca }) {
               <div className="sm:col-span-6">
                 <label className="block text-xs font-semibold text-slate-500 mb-1.5">Densidade (g/mL)</label>
                 <input
-                  type="number"
+                  type="text"
                   inputMode="decimal"
-                  step="any"
-                  min="0.1"
                   value={liquido.densidade}
-                  onChange={(e) => setLiquido((p) => ({ ...p, densidade: e.target.value }))}
+                  onChange={(e) =>
+                    setLiquido((p) => ({
+                      ...p,
+                      densidade: sanitizarNumeroDecimal(e.target.value),
+                    }))
+                  }
                   className="w-full px-3.5 py-2.5 text-sm font-mono font-semibold"
                 />
               </div>
@@ -447,12 +489,15 @@ export default function ModuloSolucoes({ onAbrirModoBalanca }) {
                 <label className="block text-xs font-semibold text-slate-500 mb-1.5">Concentração alvo</label>
                 <div className="flex gap-2">
                   <input
-                    type="number"
+                    type="text"
                     inputMode="decimal"
-                    step="any"
-                    min="0"
                     value={liquido.concentracao}
-                    onChange={(e) => setLiquido((p) => ({ ...p, concentracao: e.target.value }))}
+                    onChange={(e) =>
+                      setLiquido((p) => ({
+                        ...p,
+                        concentracao: sanitizarNumeroDecimal(e.target.value),
+                      }))
+                    }
                     className="w-full px-3.5 py-2.5 text-sm font-mono font-semibold"
                   />
                   <select
@@ -473,12 +518,15 @@ export default function ModuloSolucoes({ onAbrirModoBalanca }) {
                 <label className="block text-xs font-semibold text-slate-500 mb-1.5">Volume final</label>
                 <div className="flex gap-2">
                   <input
-                    type="number"
+                    type="text"
                     inputMode="decimal"
-                    step="any"
-                    min="0"
                     value={liquido.volume}
-                    onChange={(e) => setLiquido((p) => ({ ...p, volume: e.target.value }))}
+                    onChange={(e) =>
+                      setLiquido((p) => ({
+                        ...p,
+                        volume: sanitizarNumeroDecimal(e.target.value),
+                      }))
+                    }
                     className="w-full px-3.5 py-2.5 text-sm font-mono font-semibold"
                   />
                   <select
@@ -603,12 +651,15 @@ export default function ModuloSolucoes({ onAbrirModoBalanca }) {
                 <label className="block text-xs font-semibold text-slate-500 mb-1.5">Concentração inicial (C₁)</label>
                 <div className="flex gap-2">
                   <input
-                    type="number"
+                    type="text"
                     inputMode="decimal"
-                    step="any"
-                    min="0"
                     value={diluicao.c1}
-                    onChange={(e) => setDiluicao((p) => ({ ...p, c1: e.target.value }))}
+                    onChange={(e) =>
+                      setDiluicao((p) => ({
+                        ...p,
+                        c1: sanitizarNumeroDecimal(e.target.value),
+                      }))
+                    }
                     className="w-full px-3.5 py-2.5 text-sm font-mono font-semibold"
                   />
                   <select
@@ -631,12 +682,15 @@ export default function ModuloSolucoes({ onAbrirModoBalanca }) {
                 <label className="block text-xs font-semibold text-slate-500 mb-1.5">Concentração final (C₂)</label>
                 <div className="flex gap-2">
                   <input
-                    type="number"
+                    type="text"
                     inputMode="decimal"
-                    step="any"
-                    min="0"
                     value={diluicao.c2}
-                    onChange={(e) => setDiluicao((p) => ({ ...p, c2: e.target.value }))}
+                    onChange={(e) =>
+                      setDiluicao((p) => ({
+                        ...p,
+                        c2: sanitizarNumeroDecimal(e.target.value),
+                      }))
+                    }
                     className="w-full px-3.5 py-2.5 text-sm font-mono font-semibold"
                   />
                   <select
@@ -659,12 +713,15 @@ export default function ModuloSolucoes({ onAbrirModoBalanca }) {
                 <label className="block text-xs font-semibold text-slate-500 mb-1.5">Volume final desejado (V₂)</label>
                 <div className="flex gap-2">
                   <input
-                    type="number"
+                    type="text"
                     inputMode="decimal"
-                    step="any"
-                    min="0"
                     value={diluicao.v2}
-                    onChange={(e) => setDiluicao((p) => ({ ...p, v2: e.target.value }))}
+                    onChange={(e) =>
+                      setDiluicao((p) => ({
+                        ...p,
+                        v2: sanitizarNumeroDecimal(e.target.value),
+                      }))
+                    }
                     className="w-full px-3.5 py-2.5 text-sm font-mono font-semibold"
                   />
                   <select

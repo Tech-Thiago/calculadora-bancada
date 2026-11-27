@@ -1,3 +1,5 @@
+import { parseNumeroBr } from "../utils/numeroInput";
+
 export default function AtalhosEscala({
   valorAtual,
   onChange,
@@ -7,7 +9,7 @@ export default function AtalhosEscala({
   chipHover = "",
 }) {
   function aplicarMultiplicador(fator) {
-    const num = parseFloat(String(valorAtual ?? "").replace(",", "."));
+    const num = parseNumeroBr(valorAtual, 0);
     if (!(num > 0)) return;
     const calculado = Number((num * fator).toFixed(4));
     onChange(String(calculado));

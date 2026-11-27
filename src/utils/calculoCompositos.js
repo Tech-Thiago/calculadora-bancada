@@ -14,6 +14,16 @@ export function calcularComposito({
   perdaPct = 0,
   componentes = [],
 }) {
+  for (const c of componentes) {
+    const fracao = Number(c.fracaoPct);
+    if (Number.isNaN(fracao) || fracao < 0) {
+      return {
+        valido: false,
+        erro: `Fração inválida para "${c.nome || "componente"}": não são permitidos valores negativos.`,
+      };
+    }
+  }
+
   const validos = componentes.filter(
     (c) => Number(c.densidade) > 0 && !Number.isNaN(Number(c.fracaoPct))
   );

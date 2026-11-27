@@ -89,6 +89,8 @@ body {
 
 .font-mono,
 input[type="number"],
+input[inputmode="decimal"],
+input[inputmode="numeric"],
 td.font-mono {
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;

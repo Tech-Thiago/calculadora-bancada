@@ -22,6 +22,7 @@ import {
   importarBackupJson,
 } from "../utils/storage";
 import { buscarNoPubChem } from "../utils/pubchemApi";
+import { parseNumeroBr, sanitizarNumeroDecimal } from "../utils/numeroInput";
 
 export default function PainelDados({ onFechar, onAbrirHistorico }) {
   const [aba, setAba] = useState("reagentes");
@@ -76,12 +77,15 @@ export default function PainelDados({ onFechar, onAbrirHistorico }) {
   function handleSalvarReagente(e) {
     e.preventDefault();
     if (!novo.nome.trim()) return;
+    const densidadeNum = parseNumeroBr(novo.densidade_g_cm3, NaN);
+    const purezaNum = parseNumeroBr(novo.pureza_padrao_pct, 100);
+    const massaMolarNum = parseNumeroBr(novo.massa_molar_g_mol, NaN);
     const atualizada = salvarReagenteCustom({
       nome: novo.nome.trim(),
       formula: novo.formula.trim() || null,
-      densidade_g_cm3: parseFloat(novo.densidade_g_cm3) || null,
-      pureza_padrao_pct: parseFloat(novo.pureza_padrao_pct) || 100,
-      massa_molar_g_mol: parseFloat(novo.massa_molar_g_mol) || null,
+      densidade_g_cm3: densidadeNum > 0 ? densidadeNum : null,
+      pureza_padrao_pct: purezaNum > 0 ? purezaNum : 100,
+      massa_molar_g_mol: massaMolarNum > 0 ? massaMolarNum : null,
       fonte: novo.fonte.trim() || "Cadastro manual (rótulo / ficha técnica)",
       urlReferencia: novo.urlReferencia.trim() || null,
       observacao: novo.observacao.trim(),
@@ -326,23 +330,31 @@ export default function PainelDados({ onFechar, onAbrirHistorico }) {
                 </div>
                 <div className="sm:col-span-2">
                   <input
-                    type="number"
+                    type="text"
                     inputMode="decimal"
-                    step="any"
                     placeholder="ρ (g/cm³)"
                     value={novo.densidade_g_cm3}
-                    onChange={(e) => setNovo((p) => ({ ...p, densidade_g_cm3: e.target.value }))}
+                    onChange={(e) =>
+                      setNovo((p) => ({
+                        ...p,
+                        densidade_g_cm3: sanitizarNumeroDecimal(e.target.value),
+                      }))
+                    }
                     className="w-full rounded-xl bg-white dark:bg-[#0b0d12] border border-slate-200 dark:border-white/10 px-3 py-2 text-sm font-mono"
                   />
                 </div>
                 <div className="sm:col-span-2">
                   <input
-                    type="number"
+                    type="text"
                     inputMode="decimal"
-                    step="any"
                     placeholder="Pureza %"
                     value={novo.pureza_padrao_pct}
-                    onChange={(e) => setNovo((p) => ({ ...p, pureza_padrao_pct: e.target.value }))}
+                    onChange={(e) =>
+                      setNovo((p) => ({
+                        ...p,
+                        pureza_padrao_pct: sanitizarNumeroDecimal(e.target.value),
+                      }))
+                    }
                     className="w-full rounded-xl bg-white dark:bg-[#0b0d12] border border-slate-200 dark:border-white/10 px-3 py-2 text-sm font-mono"
                   />
                 </div>

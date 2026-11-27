@@ -1,5 +1,5 @@
 ﻿import { useMemo, useState } from "react";
-import { Plus, Trash2, Scale, Lock, Unlock } from "lucide-react";
+import { Plus, Trash2, Scale, Lock, Unlock, AlertTriangle } from "lucide-react";
 import reagentesData from "../data/reagentes.json";
 import { calcularComposito } from "../utils/calculoCompositos";
 import { carregarReagentesCustom } from "../utils/storage";
@@ -8,6 +8,7 @@ import BarraProporcao from "../components/BarraProporcao";
 import AtalhosEscala from "../components/AtalhosEscala";
 import InputStepper from "../components/InputStepper";
 import { TEMAS_MODULO } from "../utils/temaModulos";
+import { parseNumeroBr, sanitizarNumeroDecimal } from "../utils/numeroInput";
 
 const tema = TEMAS_MODULO.compositos;
 
@@ -51,7 +52,9 @@ export default function ModuloCompositos({ onAbrirModoBalanca }) {
 
   function recalcularComMatriz(lista, travarMatriz) {
     if (!travarMatriz || lista.length < 2) return lista;
-    const somaOutros = lista.slice(1).reduce((acc, item) => acc + (parseFloat(item.fracaoPct) || 0), 0);
+    const somaOutros = lista
+      .slice(1)
+      .reduce((acc, item) => acc + parseNumeroBr(item.fracaoPct, 0), 0);
     const restante = Math.max(0, Number((100 - somaOutros).toFixed(4)));
     return lista.map((item, idx) => (idx === 0 ? { ...item, fracaoPct: String(restante) } : item));
   }
@@ -99,22 +102,34 @@ export default function ModuloCompositos({ onAbrirModoBalanca }) {
     () =>
       componentes
         .slice(1)
-        .reduce((acc, item) => acc + (parseFloat(item.fracaoPct) || 0), 0),
+        .reduce((acc, item) => acc + parseNumeroBr(item.fracaoPct, 0), 0),
     [componentes]
   );
+
+  const temFracaoNegativa = useMemo(
+    () => componentes.some((c) => parseNumeroBr(c.fracaoPct, 0) < 0),
+    [componentes]
+  );
+
+  const secundariosExcedem100 =
+    autoCompletarMatriz && !temFracaoNegativa && somaSecundarios > 100.05;
+
+  const mensagemExcessoSecundarios = secundariosExcedem100
+    ? `A soma dos componentes secundários (reforços/aditivos) está em ${somaSecundarios.toFixed(2)}%, excedendo 100% em ${(somaSecundarios - 100).toFixed(2)}%. Com a trava de matriz ativa, a matriz foi reduzida a 0% — reduza os reforços/aditivos para até 100%.`
+    : "";
 
   const resultado = useMemo(
     () =>
       calcularComposito({
         modoEntrada,
         alvoTipo,
-        alvoValor: parseFloat(alvoValor) || 0,
-        perdaPct: parseFloat(perdaPct) || 0,
+        alvoValor: parseNumeroBr(alvoValor, 0),
+        perdaPct: parseNumeroBr(perdaPct, 0),
         componentes: componentes.map((c) => ({
           id: c.id,
           nome: c.nome,
-          densidade: parseFloat(c.densidade) || 0,
-          fracaoPct: parseFloat(c.fracaoPct) || 0,
+          densidade: parseNumeroBr(c.densidade, 0),
+          fracaoPct: parseNumeroBr(c.fracaoPct, 0),
         })),
       }),
     [modoEntrada, alvoTipo, alvoValor, perdaPct, componentes]
@@ -192,12 +207,10 @@ export default function ModuloCompositos({ onAbrirModoBalanca }) {
               </label>
               <div className="flex gap-2">
                 <input
-                  type="number"
+                  type="text"
                   inputMode="decimal"
-                  step="any"
-                  min="0"
                   value={alvoValor}
-                  onChange={(e) => setAlvoValor(e.target.value)}
+                  onChange={(e) => setAlvoValor(sanitizarNumeroDecimal(e.target.value))}
                   className="w-full px-3.5 py-2.5 text-sm font-mono font-semibold"
                 />
                 <select
@@ -245,11 +258,21 @@ export default function ModuloCompositos({ onAbrirModoBalanca }) {
             </button>
           </div>
 
+          {secundariosExcedem100 && (
+            <div
+              role="alert"
+              className="flex items-start gap-2.5 p-3.5 rounded-2xl bg-amber-50/90 dark:bg-amber-950/35 border border-amber-200 dark:border-amber-700/50 text-xs font-medium text-amber-900 dark:text-amber-200"
+            >
+              <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
+              <span>{mensagemExcessoSecundarios}</span>
+            </div>
+          )}
+
           <div className="space-y-3">
             {componentes.map((comp, idx) => {
               const matrizBloqueada = idx === 0 && autoCompletarMatriz;
               const mostrarSlider = autoCompletarMatriz && idx >= 1;
-              const valorAtualNum = parseFloat(comp.fracaoPct) || 0;
+              const valorAtualNum = parseNumeroBr(comp.fracaoPct, 0);
               const somaOutrosSecundarios = mostrarSlider
                 ? Math.max(0, somaSecundarios - valorAtualNum)
                 : 0;
@@ -282,12 +305,16 @@ export default function ModuloCompositos({ onAbrirModoBalanca }) {
                       Densidade (g/cm³)
                     </label>
                     <input
-                      type="number"
+                      type="text"
                       inputMode="decimal"
-                      step="any"
-                      min="0.001"
                       value={comp.densidade}
-                      onChange={(e) => atualizarComponente(comp.id, "densidade", e.target.value)}
+                      onChange={(e) =>
+                        atualizarComponente(
+                          comp.id,
+                          "densidade",
+                          sanitizarNumeroDecimal(e.target.value)
+                        )
+                      }
                       className="w-full px-3.5 py-2.5 text-sm font-mono font-semibold"
                     />
                   </div>
@@ -297,14 +324,17 @@ export default function ModuloCompositos({ onAbrirModoBalanca }) {
                       {modoEntrada === "vol" ? "% vol" : "% wt"}
                     </label>
                     <input
-                      type="number"
+                      type="text"
                       inputMode="decimal"
-                      step="any"
-                      min="0"
-                      max="100"
                       disabled={matrizBloqueada}
                       value={comp.fracaoPct}
-                      onChange={(e) => atualizarComponente(comp.id, "fracaoPct", e.target.value)}
+                      onChange={(e) =>
+                        atualizarComponente(
+                          comp.id,
+                          "fracaoPct",
+                          sanitizarNumeroDecimal(e.target.value)
+                        )
+                      }
                       className="w-full px-3.5 py-2.5 text-sm font-mono font-bold"
                     />
                   </div>
@@ -359,7 +389,9 @@ export default function ModuloCompositos({ onAbrirModoBalanca }) {
       <div className="xl:col-span-5 xl:sticky xl:top-5">
         {!resultado.valido ? (
           <div className="p-5 rounded-3xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 text-amber-800 dark:text-amber-200 text-sm font-medium">
-            {resultado.erro}
+            {secundariosExcedem100 && parseNumeroBr(alvoValor, 0) > 0
+              ? mensagemExcessoSecundarios
+              : resultado.erro}
           </div>
         ) : (
           <aside className="bg-white p-6 space-y-6">

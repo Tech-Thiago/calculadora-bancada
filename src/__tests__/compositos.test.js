@@ -82,4 +82,20 @@ describe("calculoCompositos", () => {
     expect(resMaior.valido).toBe(false);
     expect(resMaior.erro).toContain("100%");
   });
+
+  test("calcularComposito bloqueia fracao negativa mesmo quando a soma fecha em 100% (-10% e 110%)", () => {
+    const res = calcularComposito({
+      modoEntrada: "wt",
+      alvoTipo: "massa",
+      alvoValor: 100,
+      perdaPct: 0,
+      componentes: [
+        { id: "1", nome: "Epoxi", densidade: 1.2, fracaoPct: 110 },
+        { id: "2", nome: "Fibra de Vidro", densidade: 2.5, fracaoPct: -10 },
+      ],
+    });
+
+    expect(res.valido).toBe(false);
+    expect(res.erro).toContain("negativos");
+  });
 });

@@ -7,6 +7,7 @@ import BarraProporcao from "../components/BarraProporcao";
 import AtalhosEscala from "../components/AtalhosEscala";
 import InputStepper from "../components/InputStepper";
 import { TEMAS_MODULO } from "../utils/temaModulos";
+import { parseNumeroBr, sanitizarNumeroDecimal } from "../utils/numeroInput";
 
 const tema = TEMAS_MODULO.metais;
 
@@ -37,7 +38,7 @@ export default function ModuloMetais({ onAbrirModoBalanca }) {
     if (!travar || lista.length < 2) return lista;
     const somaOutros = lista
       .slice(1)
-      .reduce((acc, item) => acc + (parseFloat(item.fracaoPct) || 0), 0);
+      .reduce((acc, item) => acc + parseNumeroBr(item.fracaoPct, 0), 0);
     const restante = Math.max(0, Number((100 - somaOutros).toFixed(4)));
     return lista.map((item, idx) =>
       idx === 0 ? { ...item, fracaoPct: String(restante) } : item
@@ -91,7 +92,7 @@ export default function ModuloMetais({ onAbrirModoBalanca }) {
     () =>
       elementos
         .slice(1)
-        .reduce((acc, item) => acc + (parseFloat(item.fracaoPct) || 0), 0),
+        .reduce((acc, item) => acc + parseNumeroBr(item.fracaoPct, 0), 0),
     [elementos]
   );
 
@@ -99,9 +100,14 @@ export default function ModuloMetais({ onAbrirModoBalanca }) {
     () =>
       calcularLigaMetalica({
         modoEntrada,
-        massaAlvoG: parseFloat(massaAlvoG) || 0,
-        perdaPct: parseFloat(perdaPct) || 0,
-        elementos,
+        massaAlvoG: parseNumeroBr(massaAlvoG, 0),
+        perdaPct: parseNumeroBr(perdaPct, 0),
+        elementos: elementos.map((e) => ({
+          ...e,
+          fracaoPct: parseNumeroBr(e.fracaoPct, 0),
+          purezaPct: parseNumeroBr(e.purezaPct, 0),
+          rendimentoPct: parseNumeroBr(e.rendimentoPct, 0),
+        })),
       }),
     [modoEntrada, massaAlvoG, perdaPct, elementos]
   );
@@ -178,12 +184,10 @@ export default function ModuloMetais({ onAbrirModoBalanca }) {
                 Massa do lingote (g)
               </label>
               <input
-                type="number"
+                type="text"
                 inputMode="decimal"
-                step="any"
-                min="0"
                 value={massaAlvoG}
-                onChange={(e) => setMassaAlvoG(e.target.value)}
+                onChange={(e) => setMassaAlvoG(sanitizarNumeroDecimal(e.target.value))}
                 className="w-full px-3.5 py-2.5 text-sm font-mono font-semibold"
               />
               <AtalhosEscala
@@ -240,7 +244,7 @@ export default function ModuloMetais({ onAbrirModoBalanca }) {
             {elementos.map((el, idx) => {
               const baseBloqueada = idx === 0 && autoCompletarBase;
               const mostrarSlider = autoCompletarBase && idx >= 1;
-              const valorAtualNum = parseFloat(el.fracaoPct) || 0;
+              const valorAtualNum = parseNumeroBr(el.fracaoPct, 0);
               const somaOutrosSecundarios = mostrarSlider
                 ? Math.max(0, somaSecundarios - valorAtualNum)
                 : 0;
@@ -273,14 +277,17 @@ export default function ModuloMetais({ onAbrirModoBalanca }) {
                       {modoEntrada === "at" ? "% at." : "% wt."}
                     </label>
                     <input
-                      type="number"
+                      type="text"
                       inputMode="decimal"
-                      step="any"
-                      min="0"
-                      max="100"
                       disabled={baseBloqueada}
                       value={el.fracaoPct}
-                      onChange={(e) => atualizarElemento(el.id, "fracaoPct", e.target.value)}
+                      onChange={(e) =>
+                        atualizarElemento(
+                          el.id,
+                          "fracaoPct",
+                          sanitizarNumeroDecimal(e.target.value)
+                        )
+                      }
                       className="w-full px-3 py-2.5 text-sm font-mono font-bold"
                     />
                   </div>
@@ -290,13 +297,16 @@ export default function ModuloMetais({ onAbrirModoBalanca }) {
                       Pureza (%)
                     </label>
                     <input
-                      type="number"
+                      type="text"
                       inputMode="decimal"
-                      step="any"
-                      min="0.1"
-                      max="100"
                       value={el.purezaPct}
-                      onChange={(e) => atualizarElemento(el.id, "purezaPct", e.target.value)}
+                      onChange={(e) =>
+                        atualizarElemento(
+                          el.id,
+                          "purezaPct",
+                          sanitizarNumeroDecimal(e.target.value)
+                        )
+                      }
                       className="w-full px-3 py-2.5 text-sm font-mono font-semibold"
                     />
                   </div>
@@ -306,13 +316,16 @@ export default function ModuloMetais({ onAbrirModoBalanca }) {
                       Rend. (%)
                     </label>
                     <input
-                      type="number"
+                      type="text"
                       inputMode="decimal"
-                      step="any"
-                      min="1"
-                      max="100"
                       value={el.rendimentoPct}
-                      onChange={(e) => atualizarElemento(el.id, "rendimentoPct", e.target.value)}
+                      onChange={(e) =>
+                        atualizarElemento(
+                          el.id,
+                          "rendimentoPct",
+                          sanitizarNumeroDecimal(e.target.value)
+                        )
+                      }
                       className="w-full px-3 py-2.5 text-sm font-mono font-semibold"
                     />
                   </div>

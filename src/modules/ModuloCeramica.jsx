@@ -9,6 +9,7 @@ import FormulaQuimica from "../components/FormulaQuimica";
 import AtalhosEscala from "../components/AtalhosEscala";
 import InputStepper from "../components/InputStepper";
 import { TEMAS_MODULO } from "../utils/temaModulos";
+import { parseNumeroBr, sanitizarNumeroDecimal } from "../utils/numeroInput";
 
 const tema = TEMAS_MODULO.ceramica;
 
@@ -118,17 +119,19 @@ export default function ModuloCeramica({ onAbrirModoBalanca }) {
   const resultado = useMemo(() => {
     return calcularSinteseCeramica({
       formulaAlvo,
-      massaAlvoG: parseFloat(massaAlvoG) || 0,
-      perdaPct: parseFloat(perdaPct) || 0,
+      massaAlvoG: parseNumeroBr(massaAlvoG, 0),
+      perdaPct: parseNumeroBr(perdaPct, 0),
       precursores: cationsDetectados.map((el) => ({
         cation: el,
         formula: mapaPrecursores[el]?.formula || "",
         nome: mapaPrecursores[el]?.nome || el,
-        purezaPct: parseFloat(mapaPrecursores[el]?.purezaPct) || 100,
+        purezaPct: parseNumeroBr(mapaPrecursores[el]?.purezaPct, 100),
         alertas: mapaPrecursores[el]?.alertas || [],
       })),
       dopagem: {
         ...dopagem,
+        porcentagemMol: parseNumeroBr(dopagem.porcentagemMol, 0),
+        purezaPct: parseNumeroBr(dopagem.purezaPct, 0),
         elementoSubstituido: elementoSubEfetivo,
       },
     });
@@ -180,12 +183,10 @@ export default function ModuloCeramica({ onAbrirModoBalanca }) {
             <div className="sm:col-span-3">
               <label className="block text-xs font-semibold text-slate-500 mb-1.5">Massa alvo (g)</label>
               <input
-                type="number"
+                type="text"
                 inputMode="decimal"
-                step="any"
-                min="0"
                 value={massaAlvoG}
-                onChange={(e) => setMassaAlvoG(e.target.value)}
+                onChange={(e) => setMassaAlvoG(sanitizarNumeroDecimal(e.target.value))}
                 className="w-full px-3.5 py-2.5 text-sm font-mono font-semibold"
               />
               <AtalhosEscala
@@ -291,13 +292,16 @@ export default function ModuloCeramica({ onAbrirModoBalanca }) {
                     <div className="sm:col-span-3">
                       <label className="block text-[11px] font-semibold text-slate-500 mb-1.5">Pureza (%)</label>
                       <input
-                        type="number"
+                        type="text"
                         inputMode="decimal"
-                        step="any"
-                        min="0.1"
-                        max="100"
                         value={prec.purezaPct}
-                        onChange={(e) => atualizarPrecursor(el, "purezaPct", e.target.value)}
+                        onChange={(e) =>
+                          atualizarPrecursor(
+                            el,
+                            "purezaPct",
+                            sanitizarNumeroDecimal(e.target.value)
+                          )
+                        }
                         className="w-full px-3 py-2.5 text-sm font-mono font-semibold"
                       />
                     </div>
@@ -368,13 +372,15 @@ export default function ModuloCeramica({ onAbrirModoBalanca }) {
               <div className="sm:col-span-2">
                 <label className="block text-[11px] font-semibold text-slate-500 mb-1.5">% mol</label>
                 <input
-                  type="number"
+                  type="text"
                   inputMode="decimal"
-                  step="any"
-                  min="0.01"
-                  max="99"
                   value={dopagem.porcentagemMol}
-                  onChange={(e) => setDopagem((p) => ({ ...p, porcentagemMol: e.target.value }))}
+                  onChange={(e) =>
+                    setDopagem((p) => ({
+                      ...p,
+                      porcentagemMol: sanitizarNumeroDecimal(e.target.value),
+                    }))
+                  }
                   className="w-full px-2.5 py-2 text-sm font-mono font-bold"
                 />
               </div>
@@ -392,13 +398,15 @@ export default function ModuloCeramica({ onAbrirModoBalanca }) {
               <div className={dopagem.modo === "substitucional" ? "sm:col-span-2" : "sm:col-span-3"}>
                 <label className="block text-[11px] font-semibold text-slate-500 mb-1.5">Pur. (%)</label>
                 <input
-                  type="number"
+                  type="text"
                   inputMode="decimal"
-                  step="any"
-                  min="0.1"
-                  max="100"
                   value={dopagem.purezaPct}
-                  onChange={(e) => setDopagem((p) => ({ ...p, purezaPct: e.target.value }))}
+                  onChange={(e) =>
+                    setDopagem((p) => ({
+                      ...p,
+                      purezaPct: sanitizarNumeroDecimal(e.target.value),
+                    }))
+                  }
                   className="w-full px-2.5 py-2 text-sm font-mono"
                 />
               </div>

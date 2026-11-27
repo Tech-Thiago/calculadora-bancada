@@ -22,6 +22,7 @@ import {
   formatarResolucaoBalanca,
   calcularDesvioMassa,
 } from "../utils/exportacao";
+import { sanitizarNumeroDecimal } from "../utils/numeroInput";
 
 function BadgeDesvio({ desvio, grande = false }) {
   if (!desvio) return null;
@@ -376,13 +377,13 @@ export default function ModoBalanca({
                       Massa real pesada (g) — opcional
                     </label>
                     <input
-                      type="number"
+                      type="text"
                       inputMode="decimal"
-                      step="any"
-                      min="0"
                       placeholder={massaNumericaFoco.toFixed(4)}
                       value={massasReais[itemFoco.id] || ""}
-                      onChange={(e) => onAtualizarMassaReal(itemFoco.id, e.target.value)}
+                      onChange={(e) =>
+                        onAtualizarMassaReal(itemFoco.id, sanitizarNumeroDecimal(e.target.value))
+                      }
                       className="w-full rounded-xl bg-white dark:bg-[#141720] border border-slate-300 dark:border-white/15 px-4 py-3 text-base font-mono font-bold text-slate-900 dark:text-white"
                     />
                   </div>
@@ -499,13 +500,13 @@ export default function ModoBalanca({
                         </label>
                         <input
                           id={`massa-real-${item.id}`}
-                          type="number"
+                          type="text"
                           inputMode="decimal"
-                          step="any"
-                          min="0"
                           placeholder={massaNumerica.toFixed(4)}
                           value={massasReais[item.id] || ""}
-                          onChange={(e) => onAtualizarMassaReal(item.id, e.target.value)}
+                          onChange={(e) =>
+                            onAtualizarMassaReal(item.id, sanitizarNumeroDecimal(e.target.value))
+                          }
                           className="w-36 rounded-xl bg-slate-50 dark:bg-[#0b0d12] border border-slate-200 dark:border-white/10 px-3 py-2 text-sm font-mono font-semibold text-slate-900 dark:text-white"
                         />
                       </div>

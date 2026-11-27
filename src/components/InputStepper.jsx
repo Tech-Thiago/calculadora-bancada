@@ -1,13 +1,15 @@
+import { parseNumeroBr, sanitizarNumeroDecimal } from "../utils/numeroInput";
+
 export default function InputStepper({
   value,
   onChange,
   step = 1,
   min = 0,
   max,
+  apenasInteiro = false,
   ariaLabel = "Margem de perda (%)",
 }) {
-  const atualNum = parseFloat(String(value ?? "").replace(",", "."));
-  const valorValido = Number.isFinite(atualNum) ? atualNum : min;
+  const valorValido = parseNumeroBr(value, min ?? 0);
 
   function ajustar(delta) {
     let proximo = valorValido + delta;
@@ -32,14 +34,13 @@ export default function InputStepper({
         −
       </button>
       <input
-        type="number"
-        inputMode="decimal"
-        step="any"
-        min={min}
-        max={max}
+        type="text"
+        inputMode={apenasInteiro ? "numeric" : "decimal"}
         aria-label={ariaLabel}
         value={value}
-        onChange={(e) => onChange(e.target.value)}
+        onChange={(e) =>
+          onChange(sanitizarNumeroDecimal(e.target.value, { apenasInteiro }))
+        }
         className="w-full min-w-0 px-2.5 py-2.5 text-sm font-mono font-semibold text-center"
       />
       <button
