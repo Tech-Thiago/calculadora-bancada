@@ -6,6 +6,7 @@ import { calcularSinteseCeramica } from "../utils/calculoCeramica";
 import AutocompleteInput from "../components/AutocompleteInput";
 import BarraProporcao from "../components/BarraProporcao";
 import FormulaQuimica from "../components/FormulaQuimica";
+import AtalhosEscala from "../components/AtalhosEscala";
 import { TEMAS_MODULO } from "../utils/temaModulos";
 
 const tema = TEMAS_MODULO.ceramica;
@@ -184,6 +185,13 @@ export default function ModuloCeramica({ onAbrirModoBalanca }) {
                 value={massaAlvoG}
                 onChange={(e) => setMassaAlvoG(e.target.value)}
                 className="w-full px-3.5 py-2.5 text-sm font-mono font-semibold"
+              />
+              <AtalhosEscala
+                valorAtual={massaAlvoG}
+                onChange={setMassaAlvoG}
+                unidade="g"
+                presets={[5, 10, 25, 50]}
+                chipHover={tema.chipHover}
               />
             </div>
 

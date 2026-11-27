@@ -4,6 +4,7 @@ import { calcularLigaMetalica, LIGAS_PRESET } from "../utils/calculoMetais";
 import { ELEMENTOS_INFO } from "../data/tabelaPeriodica";
 import AutocompleteInput from "../components/AutocompleteInput";
 import BarraProporcao from "../components/BarraProporcao";
+import AtalhosEscala from "../components/AtalhosEscala";
 import { TEMAS_MODULO } from "../utils/temaModulos";
 
 const tema = TEMAS_MODULO.metais;
@@ -174,6 +175,13 @@ export default function ModuloMetais({ onAbrirModoBalanca }) {
                 value={massaAlvoG}
                 onChange={(e) => setMassaAlvoG(e.target.value)}
                 className="w-full px-3.5 py-2.5 text-sm font-mono font-semibold"
+              />
+              <AtalhosEscala
+                valorAtual={massaAlvoG}
+                onChange={setMassaAlvoG}
+                unidade="g"
+                presets={[10, 20, 50, 100]}
+                chipHover={tema.chipHover}
               />
             </div>
 

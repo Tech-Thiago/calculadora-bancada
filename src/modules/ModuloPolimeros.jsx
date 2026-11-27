@@ -2,6 +2,7 @@
 import { Plus, Trash2, Scale } from "lucide-react";
 import { calcularPolimero, SISTEMAS_RESINA_PRESET } from "../utils/calculoPolimeros";
 import BarraProporcao from "../components/BarraProporcao";
+import AtalhosEscala from "../components/AtalhosEscala";
 import { TEMAS_MODULO } from "../utils/temaModulos";
 
 const tema = TEMAS_MODULO.polimeros;
@@ -275,6 +276,13 @@ export default function ModuloPolimeros({ onAbrirModoBalanca }) {
                 value={massaAlvoG}
                 onChange={(e) => setMassaAlvoG(e.target.value)}
                 className="w-full px-3.5 py-2.5 text-sm font-mono font-semibold"
+              />
+              <AtalhosEscala
+                valorAtual={massaAlvoG}
+                onChange={setMassaAlvoG}
+                unidade="g"
+                presets={[25, 50, 100, 250]}
+                chipHover={tema.chipHover}
               />
             </div>
             <div>

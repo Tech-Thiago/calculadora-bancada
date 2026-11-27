@@ -7,6 +7,8 @@ import {
   calcularDiluicao,
 } from "../utils/calculoSolucoes";
 import FormulaQuimica from "../components/FormulaQuimica";
+import AtalhosEscala from "../components/AtalhosEscala";
+import BalaoVolumetricoSvg from "../components/BalaoVolumetricoSvg";
 import { TEMAS_MODULO } from "../utils/temaModulos";
 
 const tema = TEMAS_MODULO.solucoes;
@@ -288,6 +290,14 @@ export default function ModuloSolucoes({ onAbrirModoBalanca }) {
                     <option value="L">L</option>
                   </select>
                 </div>
+                <AtalhosEscala
+                  valorAtual={solido.volume}
+                  onChange={(val) => setSolido((p) => ({ ...p, volume: val }))}
+                  onPreset={(val) => setSolido((p) => ({ ...p, volume: String(val), unidadeVol: "mL" }))}
+                  unidade="mL"
+                  presets={[100, 250, 500, 1000]}
+                  chipHover={tema.chipHover}
+                />
               </div>
             </div>
           </section>
@@ -473,6 +483,14 @@ export default function ModuloSolucoes({ onAbrirModoBalanca }) {
                     <option value="L">L</option>
                   </select>
                 </div>
+                <AtalhosEscala
+                  valorAtual={liquido.volume}
+                  onChange={(val) => setLiquido((p) => ({ ...p, volume: val }))}
+                  onPreset={(val) => setLiquido((p) => ({ ...p, volume: String(val), unidadeVol: "mL" }))}
+                  unidade="mL"
+                  presets={[100, 250, 500]}
+                  chipHover={tema.chipHover}
+                />
               </div>
             </div>
           </section>
@@ -527,6 +545,13 @@ export default function ModuloSolucoes({ onAbrirModoBalanca }) {
                     <AlertTriangle className="w-4 h-4 shrink-0" /> Alertas: {resLiquido.alertas.join(" · ")}
                   </div>
                 )}
+
+                <BalaoVolumetricoSvg
+                  volumeSoluto={resLiquido.volumePipetarMl}
+                  volumeTotal={resLiquido.volumeFinalMl}
+                  unidade="mL"
+                  acidoForte={resLiquido.acidoForte}
+                />
 
                 <div className="space-y-2">
                   <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400">Roteiro de pipetagem</h4>
@@ -642,6 +667,14 @@ export default function ModuloSolucoes({ onAbrirModoBalanca }) {
                     <option value="uL">µL</option>
                   </select>
                 </div>
+                <AtalhosEscala
+                  valorAtual={diluicao.v2}
+                  onChange={(val) => setDiluicao((p) => ({ ...p, v2: val }))}
+                  onPreset={(val) => setDiluicao((p) => ({ ...p, v2: String(val), unidadeV2: "mL" }))}
+                  unidade="mL"
+                  presets={[50, 100, 250, 500]}
+                  chipHover={tema.chipHover}
+                />
               </div>
             </div>
           </section>
@@ -684,6 +717,13 @@ export default function ModuloSolucoes({ onAbrirModoBalanca }) {
                     </div>
                   </div>
                 </div>
+
+                <BalaoVolumetricoSvg
+                  volumeSoluto={resDiluicao.v1}
+                  volumeTotal={resDiluicao.v2}
+                  unidade={resDiluicao.unidadeV2}
+                  acidoForte={false}
+                />
 
                 <div className="space-y-2">
                   <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400">Roteiro de diluição</h4>

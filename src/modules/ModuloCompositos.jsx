@@ -5,6 +5,7 @@ import { calcularComposito } from "../utils/calculoCompositos";
 import { carregarReagentesCustom } from "../utils/storage";
 import AutocompleteInput from "../components/AutocompleteInput";
 import BarraProporcao from "../components/BarraProporcao";
+import AtalhosEscala from "../components/AtalhosEscala";
 import { TEMAS_MODULO } from "../utils/temaModulos";
 
 const tema = TEMAS_MODULO.compositos;
@@ -198,6 +199,13 @@ export default function ModuloCompositos({ onAbrirModoBalanca }) {
                   <option value="massa">g</option>
                 </select>
               </div>
+              <AtalhosEscala
+                valorAtual={alvoValor}
+                onChange={setAlvoValor}
+                unidade={alvoTipo === "volume" ? "cm³" : "g"}
+                presets={[10, 50, 100]}
+                chipHover={tema.chipHover}
+              />
             </div>
 
             <div>
