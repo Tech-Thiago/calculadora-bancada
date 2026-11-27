@@ -6,6 +6,9 @@ import {
   calcularSolucaoLiquido,
   calcularDiluicao,
 } from "../utils/calculoSolucoes";
+import { TEMAS_MODULO } from "../utils/temaModulos";
+
+const tema = TEMAS_MODULO.solucoes;
 
 export default function ModuloSolucoes({ onAbrirModoBalanca }) {
   const [submodo, setSubmodo] = useState("solido");
@@ -144,7 +147,7 @@ export default function ModuloSolucoes({ onAbrirModoBalanca }) {
           onClick={() => setSubmodo("solido")}
           className={`flex items-center justify-center gap-2 py-2.5 px-4 rounded-full text-xs sm:text-sm font-bold transition cursor-pointer ${
             submodo === "solido"
-              ? "bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-md shadow-indigo-500/20"
+              ? tema.pillSubmodoAtiva
               : "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/5"
           }`}
         >
@@ -156,7 +159,7 @@ export default function ModuloSolucoes({ onAbrirModoBalanca }) {
           onClick={() => setSubmodo("liquido")}
           className={`flex items-center justify-center gap-2 py-2.5 px-4 rounded-full text-xs sm:text-sm font-bold transition cursor-pointer ${
             submodo === "liquido"
-              ? "bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-md shadow-indigo-500/20"
+              ? tema.pillSubmodoAtiva
               : "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/5"
           }`}
         >
@@ -168,7 +171,7 @@ export default function ModuloSolucoes({ onAbrirModoBalanca }) {
           onClick={() => setSubmodo("diluicao")}
           className={`flex items-center justify-center gap-2 py-2.5 px-4 rounded-full text-xs sm:text-sm font-bold transition cursor-pointer ${
             submodo === "diluicao"
-              ? "bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-md shadow-indigo-500/20"
+              ? tema.pillSubmodoAtiva
               : "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/5"
           }`}
         >
@@ -290,25 +293,25 @@ export default function ModuloSolucoes({ onAbrirModoBalanca }) {
               <aside className="bg-white p-6 space-y-5">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Resultado</span>
-                  <span className="text-[11px] font-mono font-semibold px-2.5 py-1 rounded-full bg-slate-100 dark:bg-white/5 text-slate-500">
+                  <span className={`text-[11px] font-mono font-semibold px-2.5 py-1 rounded-full border ${tema.headerBadge}`}>
                     {resSolido.formula}
                   </span>
                 </div>
 
-                <div className="p-5 rounded-2xl bg-gradient-to-br from-indigo-600/10 via-violet-600/5 to-transparent border border-indigo-500/15">
-                  <span className="text-xs font-semibold text-indigo-600 dark:text-indigo-400">
+                <div className={`p-5 rounded-2xl ${tema.visorContainer}`}>
+                  <span className={`text-[11px] font-mono font-bold uppercase tracking-wider ${tema.visorLabel}`}>
                     Pesar na balança
                   </span>
-                  <div className="text-4xl font-mono font-extrabold tracking-tight text-slate-900 mt-1">
+                  <div className="text-4xl font-mono font-extrabold tracking-tight text-slate-900 mt-1.5 tabular-nums">
                     {resSolido.massaPesarG.toFixed(4)}
                     <span className="text-lg font-semibold text-slate-400 ml-1.5">g</span>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-3 mt-4 pt-4 border-t border-indigo-500/15">
+                  <div className={`grid grid-cols-2 gap-3 mt-4 pt-4 border-t ${tema.visorDivisor}`}>
                     {resSolido.massaMolar && (
                       <div>
                         <span className="block text-[11px] font-medium text-slate-500">Massa molar</span>
-                        <span className="text-sm font-mono font-bold text-slate-900">
+                        <span className="text-sm font-mono font-bold text-slate-900 tabular-nums">
                           {resSolido.massaMolar.toFixed(2)} g/mol
                         </span>
                       </div>
@@ -316,7 +319,7 @@ export default function ModuloSolucoes({ onAbrirModoBalanca }) {
                     {resSolido.mols != null && (
                       <div>
                         <span className="block text-[11px] font-medium text-slate-500">Mols de soluto</span>
-                        <span className="text-sm font-mono font-bold text-slate-900">
+                        <span className="text-sm font-mono font-bold text-slate-900 tabular-nums">
                           {resSolido.mols.toFixed(5)} mol
                         </span>
                       </div>
@@ -342,7 +345,7 @@ export default function ModuloSolucoes({ onAbrirModoBalanca }) {
                 <button
                   type="button"
                   onClick={abrirBalancaSolido}
-                  className="w-full inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-indigo-600 to-violet-600 text-white px-5 py-3.5 text-sm font-bold hover:opacity-95 transition shadow-lg shadow-indigo-500/25 cursor-pointer"
+                  className={`w-full inline-flex items-center justify-center gap-2 rounded-full px-5 py-3.5 text-sm font-bold transition cursor-pointer ${tema.botaoPrimario}`}
                 >
                   <Scale className="w-4 h-4" /> Abrir Modo Balança
                 </button>
@@ -468,16 +471,16 @@ export default function ModuloSolucoes({ onAbrirModoBalanca }) {
               <aside className="bg-white p-6 space-y-5">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Resultado</span>
-                  <span className="text-[11px] font-mono font-semibold px-2.5 py-1 rounded-full bg-slate-100 dark:bg-white/5 text-slate-500">
+                  <span className={`text-[11px] font-mono font-semibold px-2.5 py-1 rounded-full border ${tema.headerBadge}`}>
                     {resLiquido.formula}
                   </span>
                 </div>
 
-                <div className="p-5 rounded-2xl bg-gradient-to-br from-indigo-600/10 via-violet-600/5 to-transparent border border-indigo-500/15">
-                  <span className="text-xs font-semibold text-indigo-600 dark:text-indigo-400">
+                <div className={`p-5 rounded-2xl ${tema.visorContainer}`}>
+                  <span className={`text-[11px] font-mono font-bold uppercase tracking-wider ${tema.visorLabel}`}>
                     Volume a pipetar
                   </span>
-                  <div className="text-4xl font-mono font-extrabold tracking-tight text-slate-900 mt-1">
+                  <div className="text-4xl font-mono font-extrabold tracking-tight text-slate-900 mt-1.5 tabular-nums">
                     {resLiquido.volumePipetarMl >= 1
                       ? resLiquido.volumePipetarMl.toFixed(3)
                       : resLiquido.volumePipetarUl.toFixed(1)}
@@ -486,17 +489,17 @@ export default function ModuloSolucoes({ onAbrirModoBalanca }) {
                     </span>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-3 mt-4 pt-4 border-t border-indigo-500/15">
+                  <div className={`grid grid-cols-2 gap-3 mt-4 pt-4 border-t ${tema.visorDivisor}`}>
                     <div>
                       <span className="block text-[11px] font-medium text-slate-500">Massa equivalente</span>
-                      <span className="text-sm font-mono font-bold text-slate-900">
+                      <span className="text-sm font-mono font-bold text-slate-900 tabular-nums">
                         {resLiquido.massaEquivalenteG.toFixed(4)} g
                       </span>
                     </div>
                     {resLiquido.molaridadeEstoque && (
                       <div>
                         <span className="block text-[11px] font-medium text-slate-500">Molaridade do frasco</span>
-                        <span className="text-sm font-mono font-bold text-slate-900">
+                        <span className="text-sm font-mono font-bold text-slate-900 tabular-nums">
                           {resLiquido.molaridadeEstoque.toFixed(2)} M
                         </span>
                       </div>
@@ -522,7 +525,7 @@ export default function ModuloSolucoes({ onAbrirModoBalanca }) {
                 <button
                   type="button"
                   onClick={abrirBalancaLiquido}
-                  className="w-full inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-indigo-600 to-violet-600 text-white px-5 py-3.5 text-sm font-bold hover:opacity-95 transition shadow-lg shadow-indigo-500/25 cursor-pointer"
+                  className={`w-full inline-flex items-center justify-center gap-2 rounded-full px-5 py-3.5 text-sm font-bold transition cursor-pointer ${tema.botaoPrimario}`}
                 >
                   <Scale className="w-4 h-4" /> Abrir Modo Balança
                 </button>
@@ -637,30 +640,30 @@ export default function ModuloSolucoes({ onAbrirModoBalanca }) {
               <aside className="bg-white p-6 space-y-5">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Resultado</span>
-                  <span className="text-[11px] font-mono font-semibold px-2.5 py-1 rounded-full bg-slate-100 dark:bg-white/5 text-slate-500">
+                  <span className={`text-[11px] font-mono font-semibold px-2.5 py-1 rounded-full border ${tema.headerBadge}`}>
                     {resDiluicao.fatorDiluicao.toFixed(2)}x
                   </span>
                 </div>
 
-                <div className="p-5 rounded-2xl bg-gradient-to-br from-indigo-600/10 via-violet-600/5 to-transparent border border-indigo-500/15">
-                  <span className="text-xs font-semibold text-indigo-600 dark:text-indigo-400">
+                <div className={`p-5 rounded-2xl ${tema.visorContainer}`}>
+                  <span className={`text-[11px] font-mono font-bold uppercase tracking-wider ${tema.visorLabel}`}>
                     Alíquota estoque (V₁)
                   </span>
-                  <div className="text-4xl font-mono font-extrabold tracking-tight text-slate-900 mt-1">
+                  <div className="text-4xl font-mono font-extrabold tracking-tight text-slate-900 mt-1.5 tabular-nums">
                     {resDiluicao.v1.toFixed(3)}
                     <span className="text-lg font-semibold text-slate-400 ml-1.5">{resDiluicao.unidadeV2}</span>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-3 mt-4 pt-4 border-t border-indigo-500/15">
+                  <div className={`grid grid-cols-2 gap-3 mt-4 pt-4 border-t ${tema.visorDivisor}`}>
                     <div>
                       <span className="block text-[11px] font-medium text-slate-500">Solvente a completar</span>
-                      <span className="text-sm font-mono font-bold text-slate-900">
+                      <span className="text-sm font-mono font-bold text-slate-900 tabular-nums">
                         {resDiluicao.vSolvente.toFixed(3)} {resDiluicao.unidadeV2}
                       </span>
                     </div>
                     <div>
                       <span className="block text-[11px] font-medium text-slate-500">Fator de diluição</span>
-                      <span className="text-sm font-mono font-bold text-slate-900">
+                      <span className="text-sm font-mono font-bold text-slate-900 tabular-nums">
                         {resDiluicao.fatorDiluicao.toFixed(2)}x
                       </span>
                     </div>
@@ -679,7 +682,7 @@ export default function ModuloSolucoes({ onAbrirModoBalanca }) {
                 <button
                   type="button"
                   onClick={abrirBalancaDiluicao}
-                  className="w-full inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-indigo-600 to-violet-600 text-white px-5 py-3.5 text-sm font-bold hover:opacity-95 transition shadow-lg shadow-indigo-500/25 cursor-pointer"
+                  className={`w-full inline-flex items-center justify-center gap-2 rounded-full px-5 py-3.5 text-sm font-bold transition cursor-pointer ${tema.botaoPrimario}`}
                 >
                   <Scale className="w-4 h-4" /> Abrir Modo Balança
                 </button>

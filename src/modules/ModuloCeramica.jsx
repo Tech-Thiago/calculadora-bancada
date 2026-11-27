@@ -5,6 +5,9 @@ import { parseFormula } from "../utils/formulaParser";
 import { calcularSinteseCeramica } from "../utils/calculoCeramica";
 import AutocompleteInput from "../components/AutocompleteInput";
 import BarraProporcao from "../components/BarraProporcao";
+import { TEMAS_MODULO } from "../utils/temaModulos";
+
+const tema = TEMAS_MODULO.ceramica;
 
 const EXEMPLOS_CERAMICA = [
   { nome: "Titanato de Bário (BaTiO3)", formula: "BaTiO3", massa: "10" },
@@ -199,7 +202,7 @@ export default function ModuloCeramica({ onAbrirModoBalanca }) {
                   setFormulaAlvo(ex.formula);
                   setMassaAlvoG(ex.massa);
                 }}
-                className="px-3 py-1 rounded-full text-xs font-medium bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-300 hover:bg-indigo-500/15 hover:text-indigo-600 dark:hover:text-indigo-300 transition cursor-pointer"
+                className={`px-3 py-1 rounded-full text-xs font-medium bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-300 transition cursor-pointer ${tema.chipHover}`}
               >
                 {ex.nome}
               </button>
@@ -232,7 +235,7 @@ export default function ModuloCeramica({ onAbrirModoBalanca }) {
                     className="grid grid-cols-1 sm:grid-cols-12 gap-3 items-center p-4 bg-slate-50"
                   >
                     <div className="sm:col-span-2">
-                      <span className="inline-flex items-center justify-center w-10 h-10 rounded-2xl bg-indigo-500/15 text-indigo-600 dark:text-indigo-300 font-mono font-extrabold text-sm">
+                      <span className="inline-flex items-center justify-center w-10 h-10 rounded-2xl bg-amber-500/15 text-amber-700 dark:text-amber-300 font-mono font-extrabold text-sm">
                         {el}
                       </span>
                     </div>
@@ -300,7 +303,7 @@ export default function ModuloCeramica({ onAbrirModoBalanca }) {
                   onClick={() => setDopagem((p) => ({ ...p, modo: op.id }))}
                   className={`px-3 py-1.5 text-xs font-bold rounded-full transition cursor-pointer ${
                     dopagem.modo === op.id
-                      ? "bg-white dark:bg-indigo-500 text-slate-900 dark:text-white shadow-sm"
+                      ? tema.pillAtiva
                       : "text-slate-500 hover:text-slate-800 dark:hover:text-white"
                   }`}
                 >
@@ -404,30 +407,30 @@ export default function ModuloCeramica({ onAbrirModoBalanca }) {
           <aside className="bg-white p-6 space-y-6">
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Estequiometria</span>
-              <span className="text-[11px] font-mono font-semibold px-2.5 py-1 rounded-full bg-slate-100 dark:bg-white/5 text-slate-500">
+              <span className={`text-[11px] font-mono font-semibold px-2.5 py-1 rounded-full border ${tema.headerBadge}`}>
                 {formulaAlvo}
               </span>
             </div>
 
-            <div className="p-5 rounded-2xl bg-gradient-to-br from-indigo-600/10 via-violet-600/5 to-transparent border border-indigo-500/15">
-              <span className="text-xs font-semibold text-indigo-600 dark:text-indigo-400">
+            <div className={`p-5 rounded-2xl ${tema.visorContainer}`}>
+              <span className={`text-[11px] font-mono font-bold uppercase tracking-wider ${tema.visorLabel}`}>
                 Total de precursores a pesar
               </span>
-              <div className="text-4xl font-mono font-extrabold tracking-tight text-slate-900 mt-1">
+              <div className="text-4xl font-mono font-extrabold tracking-tight text-slate-900 mt-1.5 tabular-nums">
                 {resultado.massaTotalPrecursoresG.toFixed(4)}
                 <span className="text-lg font-semibold text-slate-400 ml-1.5">g</span>
               </div>
 
-              <div className="grid grid-cols-2 gap-3 mt-4 pt-4 border-t border-indigo-500/15">
+              <div className={`grid grid-cols-2 gap-3 mt-4 pt-4 border-t ${tema.visorDivisor}`}>
                 <div>
                   <span className="block text-[11px] font-medium text-slate-500">Massa molar alvo</span>
-                  <span className="text-sm font-mono font-bold text-slate-900">
+                  <span className="text-sm font-mono font-bold text-slate-900 tabular-nums">
                     {resultado.massaMolarAlvo.toFixed(3)} g/mol
                   </span>
                 </div>
                 <div>
                   <span className="block text-[11px] font-medium text-slate-500">Mols do produto</span>
-                  <span className="text-sm font-mono font-bold text-slate-900">
+                  <span className="text-sm font-mono font-bold text-slate-900 tabular-nums">
                     {resultado.molsAlvo.toFixed(5)} mol
                   </span>
                 </div>
@@ -451,9 +454,9 @@ export default function ModuloCeramica({ onAbrirModoBalanca }) {
                 >
                   <div className="min-w-0">
                     <div className="text-sm font-bold text-slate-900 truncate">
-                      <span className="font-mono text-indigo-600 dark:text-indigo-400">{item.formula}</span> · {item.nome}
+                      <span className={`font-mono ${tema.valorItem}`}>{item.formula}</span> · {item.nome}
                       {item.ehDopante && (
-                        <span className="ml-1.5 text-[10px] font-bold uppercase px-2 py-0.5 rounded-full bg-indigo-500/15 text-indigo-600 dark:text-indigo-300">
+                        <span className={`ml-1.5 text-[10px] font-bold uppercase px-2 py-0.5 rounded-full border ${tema.headerBadge}`}>
                           Dopante
                         </span>
                       )}
@@ -467,7 +470,7 @@ export default function ModuloCeramica({ onAbrirModoBalanca }) {
                       </div>
                     )}
                   </div>
-                  <div className="font-mono text-base font-extrabold text-indigo-600 dark:text-indigo-400 shrink-0">
+                  <div className={`font-mono text-base font-extrabold shrink-0 tabular-nums ${tema.valorItem}`}>
                     {item.massaPesarG.toFixed(4)} g
                   </div>
                 </div>
@@ -477,7 +480,7 @@ export default function ModuloCeramica({ onAbrirModoBalanca }) {
             <button
               type="button"
               onClick={handleModoBalanca}
-              className="w-full inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-indigo-600 to-violet-600 text-white px-5 py-3.5 text-sm font-bold hover:opacity-95 transition shadow-lg shadow-indigo-500/25 cursor-pointer"
+              className={`w-full inline-flex items-center justify-center gap-2 rounded-full px-5 py-3.5 text-sm font-bold transition cursor-pointer ${tema.botaoPrimario}`}
             >
               <Scale className="w-4 h-4" /> Abrir Modo Balança
             </button>

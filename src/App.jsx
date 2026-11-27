@@ -27,6 +27,7 @@ import ModuloCeramica from "./modules/ModuloCeramica";
 import ModuloSolucoes from "./modules/ModuloSolucoes";
 import ModuloMetais from "./modules/ModuloMetais";
 import PainelDados from "./components/PainelDados";
+import { TEMAS_MODULO } from "./utils/temaModulos";
 import { adicionarHistorico } from "./utils/storage";
 import {
   RESOLUCAO_BALANCA_PADRAO,
@@ -389,6 +390,7 @@ export default function App() {
 
   const moduloAtual = MODULOS.find((m) => m.id === abaAtiva) || MODULOS[0];
   const IconeModulo = moduloAtual.icon;
+  const temaAtual = TEMAS_MODULO[moduloAtual.id] || TEMAS_MODULO.compositos;
 
   return (
     <div className="min-h-screen flex flex-col lg:flex-row p-3 sm:p-5 gap-5 max-w-[1440px] mx-auto">
@@ -397,7 +399,7 @@ export default function App() {
         <div className="space-y-5">
           <div className="flex items-center justify-between px-1">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-indigo-600 to-violet-600 text-white flex items-center justify-center shadow-lg shadow-indigo-500/25">
+              <div className="w-10 h-10 rounded-2xl bg-slate-900 dark:bg-white text-white dark:text-slate-950 flex items-center justify-center shadow-sm">
                 <Beaker className="w-5 h-5" />
               </div>
               <div>
@@ -432,6 +434,7 @@ export default function App() {
             {MODULOS.map((m) => {
               const Icone = m.icon;
               const ativo = abaAtiva === m.id;
+              const temaItem = TEMAS_MODULO[m.id] || TEMAS_MODULO.compositos;
               return (
                 <button
                   key={m.id}
@@ -439,7 +442,7 @@ export default function App() {
                   onClick={() => setAbaAtiva(m.id)}
                   className={`flex items-center gap-3 px-3.5 py-2.5 rounded-2xl text-sm font-semibold transition-all whitespace-nowrap cursor-pointer ${
                     ativo
-                      ? "bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-md shadow-indigo-500/25"
+                      ? temaItem.sidebarAtivo
                       : "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white"
                   }`}
                 >
@@ -474,15 +477,20 @@ export default function App() {
 
       {/* AREA PRINCIPAL */}
       <div className="flex-1 min-w-0 flex flex-col gap-5">
-        <header className="rounded-3xl bg-white/85 dark:bg-[#141720]/85 backdrop-blur-md border border-slate-200/70 dark:border-white/8 px-6 py-5 shadow-[0_8px_24px_-12px_rgba(15,23,42,0.06)] flex flex-wrap items-center justify-between gap-4">
+        <header className="rounded-3xl bg-white/90 dark:bg-[#141720]/90 backdrop-blur-md border border-slate-200/70 dark:border-white/8 px-6 py-5 shadow-[0_4px_16px_-8px_rgba(15,23,42,0.06)] flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-3.5">
-            <div className="w-11 h-11 rounded-2xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center shrink-0">
+            <div className={`w-11 h-11 rounded-2xl flex items-center justify-center shrink-0 ${temaAtual.headerIcon}`}>
               <IconeModulo className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="text-lg sm:text-xl font-bold tracking-tight text-slate-900 dark:text-white leading-tight">
-                {moduloAtual.nome}
-              </h2>
+              <div className="flex flex-wrap items-center gap-2">
+                <h2 className="text-lg sm:text-xl font-bold tracking-tight text-slate-900 dark:text-white leading-tight">
+                  {moduloAtual.nome}
+                </h2>
+                <span className={`text-[11px] font-mono font-semibold px-2.5 py-0.5 rounded-full border ${temaAtual.headerBadge}`}>
+                  {temaAtual.nomeCurto}
+                </span>
+              </div>
               <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-0.5">
                 {moduloAtual.desc}
               </p>
@@ -501,7 +509,7 @@ export default function App() {
           </span>
         </header>
 
-        <main className="flex-1 lab-workspace">
+        <main className="flex-1 lab-workspace" data-modulo={abaAtiva}>
           {abaAtiva === "compositos" && <ModuloCompositos onAbrirModoBalanca={abrirModoBalanca} />}
           {abaAtiva === "polimeros" && <ModuloPolimeros onAbrirModoBalanca={abrirModoBalanca} />}
           {abaAtiva === "ceramica" && <ModuloCeramica onAbrirModoBalanca={abrirModoBalanca} />}

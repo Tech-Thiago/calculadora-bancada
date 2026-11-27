@@ -13,7 +13,8 @@
   --text-secondary: #475569;
   --text-muted: #64748b;
   --accent: #6366f1;
-  --shadow-card: 0 10px 30px -10px rgba(15, 23, 42, 0.08), 0 1px 3px rgba(15, 23, 42, 0.04);
+  --accent-ring: rgba(99, 102, 241, 0.16);
+  --shadow-card: 0 4px 16px -6px rgba(15, 23, 42, 0.06), 0 1px 2px rgba(15, 23, 42, 0.04);
 }
 
 .dark {
@@ -26,7 +27,53 @@
   --text-secondary: #cbd5e1;
   --text-muted: #94a3b8;
   --accent: #818cf8;
-  --shadow-card: 0 16px 40px -12px rgba(0, 0, 0, 0.55), 0 1px 0 rgba(255, 255, 255, 0.04) inset;
+  --accent-ring: rgba(129, 140, 248, 0.2);
+  --shadow-card: 0 8px 24px -10px rgba(0, 0, 0, 0.45), 0 1px 0 rgba(255, 255, 255, 0.04) inset;
+}
+
+[data-modulo="compositos"] {
+  --accent: #4f46e5;
+  --accent-ring: rgba(79, 70, 229, 0.16);
+}
+.dark [data-modulo="compositos"] {
+  --accent: #818cf8;
+  --accent-ring: rgba(129, 140, 248, 0.22);
+}
+
+[data-modulo="polimeros"] {
+  --accent: #059669;
+  --accent-ring: rgba(5, 150, 105, 0.16);
+}
+.dark [data-modulo="polimeros"] {
+  --accent: #34d399;
+  --accent-ring: rgba(52, 211, 153, 0.22);
+}
+
+[data-modulo="ceramica"] {
+  --accent: #d97706;
+  --accent-ring: rgba(217, 119, 6, 0.16);
+}
+.dark [data-modulo="ceramica"] {
+  --accent: #fbbf24;
+  --accent-ring: rgba(251, 191, 36, 0.22);
+}
+
+[data-modulo="solucoes"] {
+  --accent: #0891b2;
+  --accent-ring: rgba(8, 145, 178, 0.16);
+}
+.dark [data-modulo="solucoes"] {
+  --accent: #22d3ee;
+  --accent-ring: rgba(34, 211, 238, 0.22);
+}
+
+[data-modulo="metais"] {
+  --accent: #0369a1;
+  --accent-ring: rgba(3, 105, 161, 0.16);
+}
+.dark [data-modulo="metais"] {
+  --accent: #38bdf8;
+  --accent-ring: rgba(56, 189, 248, 0.22);
 }
 
 body {
@@ -85,7 +132,7 @@ td.font-mono {
   color: var(--text-muted);
 }
 
-.lab-workspace input,
+.lab-workspace input:not([type="range"]),
 .lab-workspace select {
   background-color: var(--bg-input);
   color: var(--text-primary);
@@ -94,17 +141,17 @@ td.font-mono {
   transition: all 0.18s ease;
 }
 
-.lab-workspace input:hover,
+.lab-workspace input:not([type="range"]):hover,
 .lab-workspace select:hover {
-  border-color: rgba(99, 102, 241, 0.25);
+  border-color: var(--accent-ring);
 }
 
-.lab-workspace input:focus,
+.lab-workspace input:not([type="range"]):focus,
 .lab-workspace select:focus {
   outline: none;
   background-color: var(--bg-surface);
   border-color: var(--accent);
-  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.16);
+  box-shadow: 0 0 0 4px var(--accent-ring);
 }
 
 .lab-workspace input:disabled {
