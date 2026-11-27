@@ -230,6 +230,24 @@ export default function ModuloMetais({ onAbrirModoBalanca }) {
           <div className="space-y-3">
             {elementos.map((el, idx) => {
               const baseBloqueada = idx === 0 && autoCompletarBase;
+              const mostrarSlider = autoCompletarBase && idx >= 1;
+              const somaOutrosSecundarios = mostrarSlider
+                ? elementos
+                    .slice(1)
+                    .reduce(
+                      (acc, item, subIdx) =>
+                        subIdx + 1 === idx ? acc : acc + (parseFloat(item.fracaoPct) || 0),
+                      0
+                    )
+                : 0;
+              const maxPermitido = mostrarSlider
+                ? Math.max(0, Number((100 - somaOutrosSecundarios).toFixed(2)))
+                : 100;
+              const valorSlider = Math.min(
+                maxPermitido,
+                Math.max(0, parseFloat(el.fracaoPct) || 0)
+              );
+
               return (
                 <div
                   key={el.id}
@@ -307,6 +325,33 @@ export default function ModuloMetais({ onAbrirModoBalanca }) {
                       </button>
                     )}
                   </div>
+
+                  {mostrarSlider && (
+                    <div className="sm:col-span-12 pt-1 flex items-center gap-3">
+                      <span className="text-[11px] font-mono text-slate-400 shrink-0">0%</span>
+                      <input
+                        type="range"
+                        min={0}
+                        max={maxPermitido}
+                        step={0.5}
+                        disabled={maxPermitido <= 0}
+                        value={valorSlider}
+                        aria-label={`Ajuste rápido da fração de ${el.simbolo || `Elemento ${idx + 1}`}`}
+                        onChange={(e) => {
+                          const bruto = parseFloat(e.target.value);
+                          const ajustado = Math.min(
+                            maxPermitido,
+                            Math.max(0, Number.isFinite(bruto) ? bruto : 0)
+                          );
+                          atualizarElemento(el.id, "fracaoPct", String(ajustado));
+                        }}
+                        className={`w-full h-1.5 rounded-lg cursor-pointer ${tema.sliderAccent}`}
+                      />
+                      <span className="text-[11px] font-mono text-slate-500 shrink-0 tabular-nums">
+                        máx. {maxPermitido}%
+                      </span>
+                    </div>
+                  )}
                 </div>
               );
             })}
