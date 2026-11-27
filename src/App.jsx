@@ -28,7 +28,19 @@ import ModuloSolucoes from "./modules/ModuloSolucoes";
 import ModuloMetais from "./modules/ModuloMetais";
 import PainelDados from "./components/PainelDados";
 import { adicionarHistorico } from "./utils/storage";
-import { exportarCSV, gerarLinkCompartilhamento, lerLinkCompartilhado } from "./utils/exportacao";
+import {
+  RESOLUCAO_BALANCA_PADRAO,
+  OPCOES_RESOLUCAO_BALANCA,
+  formatarResolucaoBalanca,
+  exportarCSV,
+  gerarLinkCompartilhamento,
+  lerLinkCompartilhado,
+} from "./utils/exportacao";
+import baseCientificaPubChem from "./data/base_cientifica_pubchem.json";
+
+const DATA_BASE_PUBCHEM = baseCientificaPubChem?.atualizado_em_utc
+  ? new Date(baseCientificaPubChem.atualizado_em_utc).toLocaleDateString("pt-BR")
+  : "Não informada";
 
 const MODULOS = [
   { id: "compositos", nome: "Compósitos e Blendas", desc: "Conversão % wt ↔ % vol e densidade teórica", icon: Layers },
@@ -40,7 +52,8 @@ const MODULOS = [
 
 export default function App() {
   const [abaAtiva, setAbaAtiva] = useState("compositos");
-  const [dadosBalanca, setDadosBalanca] = useState(() => lerLinkCompartilhado());
+  const [linkInicial] = useState(() => lerLinkCompartilhado());
+  const [dadosBalanca, setDadosBalanca] = useState(() => linkInicial);
   const [marcados, setMarcados] = useState({});
   const [painelDadosAberto, setPainelDadosAberto] = useState(false);
   const [linkCopiado, setLinkCopiado] = useState(false);
@@ -50,12 +63,14 @@ export default function App() {
   );
 
   // Resolucao da balanca e metadados da ficha de bancada (PDF)
-  const [resolucaoBalanca, setResolucaoBalanca] = useState("0.0001");
-  const [metaFicha, setMetaFicha] = useState({
-    laboratorio: "",
-    lote: "",
-    responsavel: "",
-  });
+  const [resolucaoBalanca, setResolucaoBalanca] = useState(
+    () => linkInicial?.resolucaoBalanca || RESOLUCAO_BALANCA_PADRAO
+  );
+  const [metaFicha, setMetaFicha] = useState(() => ({
+    laboratorio: linkInicial?.metaFicha?.laboratorio || "",
+    lote: linkInicial?.metaFicha?.lote || "",
+    responsavel: linkInicial?.metaFicha?.responsavel || "",
+  }));
 
   const [modoEscuro, setModoEscuro] = useState(() => {
     const salvo = localStorage.getItem("calc_bancada_tema");
@@ -108,6 +123,16 @@ export default function App() {
   function abrirModoBalanca(payload, salvarNoHistorico = true) {
     setMarcados({});
     setLinkCopiado(false);
+    if (payload?.resolucaoBalanca) {
+      setResolucaoBalanca(payload.resolucaoBalanca);
+    }
+    if (payload?.metaFicha) {
+      setMetaFicha({
+        laboratorio: payload.metaFicha.laboratorio || "",
+        lote: payload.metaFicha.lote || "",
+        responsavel: payload.metaFicha.responsavel || "",
+      });
+    }
     if (salvarNoHistorico) {
       adicionarHistorico(payload);
     }
@@ -120,7 +145,7 @@ export default function App() {
 
   async function copiarLinkWhatsApp() {
     if (!dadosBalanca) return;
-    const link = gerarLinkCompartilhamento(dadosBalanca);
+    const link = gerarLinkCompartilhamento(dadosBalanca, { metaFicha, resolucaoBalanca });
     try {
       await navigator.clipboard.writeText(link);
       setLinkCopiado(true);
@@ -135,7 +160,7 @@ export default function App() {
     const totalItens = dadosBalanca.itens.length;
     const totalMarcados = dadosBalanca.itens.filter((i) => marcados[i.id]).length;
     const progressoPct = totalItens > 0 ? (totalMarcados / totalItens) * 100 : 0;
-    const minResG = Number(resolucaoBalanca) || 0.0001;
+    const minResG = Number(resolucaoBalanca) || Number(RESOLUCAO_BALANCA_PADRAO);
 
     return (
       <div className="min-h-screen bg-[#0b0d12] text-slate-50 px-4 py-8 sm:px-8 print-ficha">
@@ -173,7 +198,7 @@ export default function App() {
                 </button>
                 <button
                   type="button"
-                  onClick={() => exportarCSV(dadosBalanca)}
+                  onClick={() => exportarCSV(dadosBalanca, { metaFicha, resolucaoBalanca })}
                   className="inline-flex items-center gap-1.5 rounded-full bg-white/5 border border-white/10 px-3.5 py-2 text-xs font-semibold text-slate-200 hover:bg-white/10 transition cursor-pointer"
                 >
                   <Download className="w-3.5 h-3.5" /> CSV
@@ -206,8 +231,8 @@ export default function App() {
             </div>
 
             {/* Resolucao da balanca e campos da ficha PDF */}
-            <div className="grid grid-cols-1 sm:grid-cols-4 gap-2.5 pt-2 border-t border-white/10">
-              <div className="no-print">
+            <div className="grid grid-cols-1 sm:grid-cols-4 gap-2.5 pt-2 border-t border-white/10 no-print">
+              <div>
                 <label className="block text-[11px] font-semibold text-slate-400 mb-1">
                   Resolução da balança
                 </label>
@@ -216,9 +241,11 @@ export default function App() {
                   onChange={(e) => setResolucaoBalanca(e.target.value)}
                   className="w-full rounded-xl bg-[#0b0d12] border border-white/10 px-3 py-2 text-xs font-mono text-white"
                 >
-                  <option value="0.0001">Analítica (0,0001 g)</option>
-                  <option value="0.001">Precisão (0,001 g)</option>
-                  <option value="0.01">Semi-analítica (0,01 g)</option>
+                  {OPCOES_RESOLUCAO_BALANCA.map((op) => (
+                    <option key={op.valor} value={op.valor}>
+                      {op.label}
+                    </option>
+                  ))}
                 </select>
               </div>
 
@@ -259,6 +286,40 @@ export default function App() {
                   onChange={(e) => setMetaFicha((p) => ({ ...p, responsavel: e.target.value }))}
                   className="w-full rounded-xl bg-[#0b0d12] border border-white/10 px-3 py-2 text-xs text-white"
                 />
+              </div>
+            </div>
+
+            {/* Cabecalho oficial somente na impressao (PDF) */}
+            <div className="hidden print:block pt-3 border-t border-slate-300 space-y-2.5 text-xs">
+              <div className="flex items-center justify-between gap-4 pb-2 border-b border-slate-200">
+                <span className="font-bold uppercase tracking-wider">
+                  LabCalc · Ficha Técnica de Bancada
+                </span>
+                <span className="font-mono">
+                  Emissão: {new Date().toLocaleString("pt-BR")}
+                </span>
+              </div>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                <div>
+                  <span className="block text-[10px] uppercase tracking-wide opacity-70">Laboratório</span>
+                  <span className="font-semibold">{metaFicha.laboratorio || "—"}</span>
+                </div>
+                <div>
+                  <span className="block text-[10px] uppercase tracking-wide opacity-70">Amostra / Lote</span>
+                  <span className="font-semibold">{metaFicha.lote || "—"}</span>
+                </div>
+                <div>
+                  <span className="block text-[10px] uppercase tracking-wide opacity-70">Responsável</span>
+                  <span className="font-semibold">{metaFicha.responsavel || "—"}</span>
+                </div>
+                <div>
+                  <span className="block text-[10px] uppercase tracking-wide opacity-70">Resolução da balança</span>
+                  <span className="font-semibold font-mono">{formatarResolucaoBalanca(resolucaoBalanca)}</span>
+                </div>
+              </div>
+              <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-200 text-[11px]">
+                <span>Base científica PubChem (NIH): {DATA_BASE_PUBCHEM}</span>
+                <span className="font-mono">Itens conferidos: {totalMarcados}/{totalItens}</span>
               </div>
             </div>
 

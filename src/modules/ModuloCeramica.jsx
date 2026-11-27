@@ -378,6 +378,19 @@ export default function ModuloCeramica({ onAbrirModoBalanca }) {
               </div>
             </div>
           )}
+
+          {dopagem.modo === "substitucional" && (
+            <div
+              role="note"
+              className="flex items-start gap-2.5 p-3.5 rounded-2xl bg-amber-50/80 dark:bg-amber-950/30 border border-amber-200/80 dark:border-amber-700/40 text-xs leading-relaxed text-amber-900 dark:text-amber-200"
+            >
+              <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
+              <p>
+                <strong className="font-semibold">Nota técnica (dopagem substitucional):</strong>{" "}
+                o cálculo de massas é feito por balanço catiônico assumindo estequiometria de oxigênio fixa (dopagem isovalente). Em dopagens aliovalentes (como La³⁺ em Ba²⁺), a compensação de carga real pode envolver vacâncias ou mudança de valência.
+              </p>
+            </div>
+          )}
         </section>
       </div>
 

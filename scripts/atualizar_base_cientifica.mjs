@@ -33,32 +33,94 @@ const COMPOSTOS_ALVO = [
 ];
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+const MAX_TENTATIVAS = 4;
+const BACKOFF_BASE_MS = 1000;
+const TAXA_MINIMA_SUCESSO = 0.9;
+
+function validarPropsPubChem(props) {
+  if (!props || typeof props !== "object") {
+    return { valido: false, motivo: "Objeto de propriedades ausente." };
+  }
+
+  const cid = Number(props.CID);
+  if (!Number.isInteger(cid) || cid <= 0) {
+    return { valido: false, motivo: `CID inválido (${props.CID}).` };
+  }
+
+  const formula = typeof props.MolecularFormula === "string" ? props.MolecularFormula.trim() : "";
+  if (!formula) {
+    return { valido: false, motivo: "MolecularFormula ausente ou vazia." };
+  }
+
+  const massaMolar = Number(props.MolecularWeight);
+  if (!Number.isFinite(massaMolar) || massaMolar <= 0) {
+    return { valido: false, motivo: `MolecularWeight inválido (${props.MolecularWeight}).` };
+  }
+
+  return { valido: true, cid, formula, massaMolar };
+}
 
 async function consultarPubChem(termo) {
   const encoded = encodeURIComponent(termo);
   const url = `https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/${encoded}/property/Title,IUPACName,MolecularFormula,MolecularWeight/JSON`;
-  try {
-    const resp = await fetch(url, {
-      headers: { "User-Agent": "LabCalc-ScientificUpdater/1.0" },
-    });
-    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-    const data = await resp.json();
-    const props = data?.PropertyTable?.Properties?.[0];
-    if (!props) return null;
 
-    return {
-      cid: props.CID,
-      titulo_pubchem: props.Title ?? null,
-      nome_iupac: props.IUPACName ?? null,
-      formula_molecular: props.MolecularFormula ?? null,
-      massa_molar_g_mol: props.MolecularWeight ? Number(props.MolecularWeight) : null,
-      fonte: `PubChem (NIH/NCBI) · CID ${props.CID}`,
-      url_referencia: `https://pubchem.ncbi.nlm.nih.gov/compound/${props.CID}`,
-    };
-  } catch (err) {
-    console.warn(`[AVISO] Falha ao consultar '${termo}': ${err.message}`);
-    return null;
+  for (let tentativa = 1; tentativa <= MAX_TENTATIVAS; tentativa++) {
+    try {
+      const resp = await fetch(url, {
+        headers: { "User-Agent": "LabCalc-ScientificUpdater/1.0" },
+      });
+
+      if (!resp.ok) {
+        const retentavel = resp.status === 429 || resp.status >= 500;
+        if (retentavel && tentativa < MAX_TENTATIVAS) {
+          const backoffMs = BACKOFF_BASE_MS * 2 ** (tentativa - 1);
+          const retryAfterSec = Number(resp.headers.get("Retry-After"));
+          const esperaMs =
+            Number.isFinite(retryAfterSec) && retryAfterSec > 0
+              ? Math.min(Math.max(backoffMs, retryAfterSec * 1000), 15000)
+              : Math.min(backoffMs, 15000);
+          console.warn(
+            `[AVISO] HTTP ${resp.status} para '${termo}' (tentativa ${tentativa}/${MAX_TENTATIVAS}). Aguardando ${esperaMs} ms...`
+          );
+          await sleep(esperaMs);
+          continue;
+        }
+        console.warn(`[AVISO] Falha HTTP ${resp.status} ao consultar '${termo}'.`);
+        return null;
+      }
+
+      const data = await resp.json();
+      const props = data?.PropertyTable?.Properties?.[0];
+      const validacao = validarPropsPubChem(props);
+      if (!validacao.valido) {
+        console.warn(`[AVISO] Schema inválido para '${termo}': ${validacao.motivo}`);
+        return null;
+      }
+
+      return {
+        cid: validacao.cid,
+        titulo_pubchem: props.Title ?? null,
+        nome_iupac: props.IUPACName ?? null,
+        formula_molecular: validacao.formula,
+        massa_molar_g_mol: validacao.massaMolar,
+        fonte: `PubChem (NIH/NCBI) · CID ${validacao.cid}`,
+        url_referencia: `https://pubchem.ncbi.nlm.nih.gov/compound/${validacao.cid}`,
+      };
+    } catch (err) {
+      if (tentativa < MAX_TENTATIVAS) {
+        const esperaMs = Math.min(BACKOFF_BASE_MS * 2 ** (tentativa - 1), 15000);
+        console.warn(
+          `[AVISO] Erro de rede para '${termo}' (tentativa ${tentativa}/${MAX_TENTATIVAS}): ${err.message}. Aguardando ${esperaMs} ms...`
+        );
+        await sleep(esperaMs);
+        continue;
+      }
+      console.warn(`[AVISO] Falha ao consultar '${termo}': ${err.message}`);
+      return null;
+    }
   }
+
+  return null;
 }
 
 async function main() {
@@ -75,6 +137,15 @@ async function main() {
       });
     }
     await sleep(250);
+  }
+
+  const totalEsperado = COMPOSTOS_ALVO.length;
+  const taxaSucesso = totalEsperado > 0 ? resultados.length / totalEsperado : 0;
+  if (taxaSucesso < TAXA_MINIMA_SUCESSO) {
+    console.error(
+      `[ERRO] Coleta insuficiente: ${resultados.length}/${totalEsperado} compostos válidos (${(taxaSucesso * 100).toFixed(1)}%). Mínimo exigido: 90%. Arquivo base_cientifica_pubchem.json não foi sobrescrito.`
+    );
+    process.exit(1);
   }
 
   const saida = {
