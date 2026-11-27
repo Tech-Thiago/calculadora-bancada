@@ -6,6 +6,7 @@ import { carregarReagentesCustom } from "../utils/storage";
 import AutocompleteInput from "../components/AutocompleteInput";
 import BarraProporcao from "../components/BarraProporcao";
 import AtalhosEscala from "../components/AtalhosEscala";
+import InputStepper from "../components/InputStepper";
 import { TEMAS_MODULO } from "../utils/temaModulos";
 
 const tema = TEMAS_MODULO.compositos;
@@ -93,6 +94,14 @@ export default function ModuloCompositos({ onAbrirModoBalanca }) {
       return proximo;
     });
   }
+
+  const somaSecundarios = useMemo(
+    () =>
+      componentes
+        .slice(1)
+        .reduce((acc, item) => acc + (parseFloat(item.fracaoPct) || 0), 0),
+    [componentes]
+  );
 
   const resultado = useMemo(
     () =>
@@ -184,6 +193,7 @@ export default function ModuloCompositos({ onAbrirModoBalanca }) {
               <div className="flex gap-2">
                 <input
                   type="number"
+                  inputMode="decimal"
                   step="any"
                   min="0"
                   value={alvoValor}
@@ -212,13 +222,12 @@ export default function ModuloCompositos({ onAbrirModoBalanca }) {
               <label className="block text-xs font-semibold text-slate-500 mb-2">
                 Margem de perda (%)
               </label>
-              <input
-                type="number"
-                step="any"
-                min="0"
+              <InputStepper
                 value={perdaPct}
-                onChange={(e) => setPerdaPct(e.target.value)}
-                className="w-full px-3.5 py-2.5 text-sm font-mono font-semibold"
+                onChange={setPerdaPct}
+                step={1}
+                min={0}
+                ariaLabel="Margem de perda (%)"
               />
             </div>
           </div>
@@ -240,22 +249,14 @@ export default function ModuloCompositos({ onAbrirModoBalanca }) {
             {componentes.map((comp, idx) => {
               const matrizBloqueada = idx === 0 && autoCompletarMatriz;
               const mostrarSlider = autoCompletarMatriz && idx >= 1;
+              const valorAtualNum = parseFloat(comp.fracaoPct) || 0;
               const somaOutrosSecundarios = mostrarSlider
-                ? componentes
-                    .slice(1)
-                    .reduce(
-                      (acc, item, subIdx) =>
-                        subIdx + 1 === idx ? acc : acc + (parseFloat(item.fracaoPct) || 0),
-                      0
-                    )
+                ? Math.max(0, somaSecundarios - valorAtualNum)
                 : 0;
               const maxPermitido = mostrarSlider
                 ? Math.max(0, Number((100 - somaOutrosSecundarios).toFixed(2)))
                 : 100;
-              const valorSlider = Math.min(
-                maxPermitido,
-                Math.max(0, parseFloat(comp.fracaoPct) || 0)
-              );
+              const valorSlider = Math.min(maxPermitido, Math.max(0, valorAtualNum));
 
               return (
                 <div
@@ -282,6 +283,7 @@ export default function ModuloCompositos({ onAbrirModoBalanca }) {
                     </label>
                     <input
                       type="number"
+                      inputMode="decimal"
                       step="any"
                       min="0.001"
                       value={comp.densidade}
@@ -296,6 +298,7 @@ export default function ModuloCompositos({ onAbrirModoBalanca }) {
                     </label>
                     <input
                       type="number"
+                      inputMode="decimal"
                       step="any"
                       min="0"
                       max="100"

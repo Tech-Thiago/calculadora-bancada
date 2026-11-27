@@ -206,15 +206,15 @@ export default function ModoBalanca({
           </div>
 
           {/* Resolucao da balanca e campos da ficha PDF */}
-          <div className="grid grid-cols-1 sm:grid-cols-4 gap-2.5 pt-2 border-t border-slate-200/80 dark:border-white/10 no-print">
-            <div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-12 gap-2.5 pt-2 border-t border-slate-200/80 dark:border-white/10 no-print">
+            <div className="md:col-span-4">
               <label className="block text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">
                 Resolução da balança
               </label>
               <select
                 value={resolucaoBalanca}
                 onChange={(e) => onChangeResolucao(e.target.value)}
-                className="w-full rounded-xl bg-slate-50 dark:bg-[#0b0d12] border border-slate-200 dark:border-white/10 px-3 py-2 text-xs font-mono text-slate-900 dark:text-white"
+                className="w-full rounded-xl bg-slate-50 dark:bg-[#0b0d12] border border-slate-200 dark:border-white/10 pl-3 pr-8 py-2 text-xs font-medium tabular-nums text-slate-900 dark:text-white"
               >
                 {OPCOES_RESOLUCAO_BALANCA.map((op) => (
                   <option key={op.valor} value={op.valor}>
@@ -224,7 +224,7 @@ export default function ModoBalanca({
               </select>
             </div>
 
-            <div>
+            <div className="md:col-span-3">
               <label className="block text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">
                 Laboratório
               </label>
@@ -237,7 +237,7 @@ export default function ModoBalanca({
               />
             </div>
 
-            <div>
+            <div className="md:col-span-2">
               <label className="block text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">
                 Amostra / Lote
               </label>
@@ -250,7 +250,7 @@ export default function ModoBalanca({
               />
             </div>
 
-            <div>
+            <div className="md:col-span-3">
               <label className="block text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">
                 Responsável
               </label>
@@ -377,6 +377,7 @@ export default function ModoBalanca({
                     </label>
                     <input
                       type="number"
+                      inputMode="decimal"
                       step="any"
                       min="0"
                       placeholder={massaNumericaFoco.toFixed(4)}
@@ -499,6 +500,7 @@ export default function ModoBalanca({
                         <input
                           id={`massa-real-${item.id}`}
                           type="number"
+                          inputMode="decimal"
                           step="any"
                           min="0"
                           placeholder={massaNumerica.toFixed(4)}

@@ -7,6 +7,7 @@ import AutocompleteInput from "../components/AutocompleteInput";
 import BarraProporcao from "../components/BarraProporcao";
 import FormulaQuimica from "../components/FormulaQuimica";
 import AtalhosEscala from "../components/AtalhosEscala";
+import InputStepper from "../components/InputStepper";
 import { TEMAS_MODULO } from "../utils/temaModulos";
 
 const tema = TEMAS_MODULO.ceramica;
@@ -180,6 +181,7 @@ export default function ModuloCeramica({ onAbrirModoBalanca }) {
               <label className="block text-xs font-semibold text-slate-500 mb-1.5">Massa alvo (g)</label>
               <input
                 type="number"
+                inputMode="decimal"
                 step="any"
                 min="0"
                 value={massaAlvoG}
@@ -197,13 +199,12 @@ export default function ModuloCeramica({ onAbrirModoBalanca }) {
 
             <div className="sm:col-span-3">
               <label className="block text-xs font-semibold text-slate-500 mb-1.5">Perda (%)</label>
-              <input
-                type="number"
-                step="any"
-                min="0"
+              <InputStepper
                 value={perdaPct}
-                onChange={(e) => setPerdaPct(e.target.value)}
-                className="w-full px-3.5 py-2.5 text-sm font-mono font-semibold"
+                onChange={setPerdaPct}
+                step={1}
+                min={0}
+                ariaLabel="Perda (%)"
               />
             </div>
           </div>
@@ -291,6 +292,7 @@ export default function ModuloCeramica({ onAbrirModoBalanca }) {
                       <label className="block text-[11px] font-semibold text-slate-500 mb-1.5">Pureza (%)</label>
                       <input
                         type="number"
+                        inputMode="decimal"
                         step="any"
                         min="0.1"
                         max="100"
@@ -367,6 +369,7 @@ export default function ModuloCeramica({ onAbrirModoBalanca }) {
                 <label className="block text-[11px] font-semibold text-slate-500 mb-1.5">% mol</label>
                 <input
                   type="number"
+                  inputMode="decimal"
                   step="any"
                   min="0.01"
                   max="99"
@@ -390,6 +393,7 @@ export default function ModuloCeramica({ onAbrirModoBalanca }) {
                 <label className="block text-[11px] font-semibold text-slate-500 mb-1.5">Pur. (%)</label>
                 <input
                   type="number"
+                  inputMode="decimal"
                   step="any"
                   min="0.1"
                   max="100"

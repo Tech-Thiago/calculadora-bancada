@@ -236,6 +236,7 @@ export default function ModuloSolucoes({ onAbrirModoBalanca }) {
                 <label className="block text-xs font-semibold text-slate-500 mb-1.5">Pureza (%)</label>
                 <input
                   type="number"
+                  inputMode="decimal"
                   step="any"
                   min="0.1"
                   max="100"
@@ -250,6 +251,7 @@ export default function ModuloSolucoes({ onAbrirModoBalanca }) {
                 <div className="flex gap-2">
                   <input
                     type="number"
+                    inputMode="decimal"
                     step="any"
                     min="0"
                     value={solido.concentracao}
@@ -275,6 +277,7 @@ export default function ModuloSolucoes({ onAbrirModoBalanca }) {
                 <div className="flex gap-2">
                   <input
                     type="number"
+                    inputMode="decimal"
                     step="any"
                     min="0"
                     value={solido.volume}
@@ -417,6 +420,7 @@ export default function ModuloSolucoes({ onAbrirModoBalanca }) {
                 <label className="block text-xs font-semibold text-slate-500 mb-1.5">Pureza (% m/m)</label>
                 <input
                   type="number"
+                  inputMode="decimal"
                   step="any"
                   min="0.1"
                   max="100"
@@ -430,6 +434,7 @@ export default function ModuloSolucoes({ onAbrirModoBalanca }) {
                 <label className="block text-xs font-semibold text-slate-500 mb-1.5">Densidade (g/mL)</label>
                 <input
                   type="number"
+                  inputMode="decimal"
                   step="any"
                   min="0.1"
                   value={liquido.densidade}
@@ -443,6 +448,7 @@ export default function ModuloSolucoes({ onAbrirModoBalanca }) {
                 <div className="flex gap-2">
                   <input
                     type="number"
+                    inputMode="decimal"
                     step="any"
                     min="0"
                     value={liquido.concentracao}
@@ -468,6 +474,7 @@ export default function ModuloSolucoes({ onAbrirModoBalanca }) {
                 <div className="flex gap-2">
                   <input
                     type="number"
+                    inputMode="decimal"
                     step="any"
                     min="0"
                     value={liquido.volume}
@@ -597,6 +604,7 @@ export default function ModuloSolucoes({ onAbrirModoBalanca }) {
                 <div className="flex gap-2">
                   <input
                     type="number"
+                    inputMode="decimal"
                     step="any"
                     min="0"
                     value={diluicao.c1}
@@ -624,6 +632,7 @@ export default function ModuloSolucoes({ onAbrirModoBalanca }) {
                 <div className="flex gap-2">
                   <input
                     type="number"
+                    inputMode="decimal"
                     step="any"
                     min="0"
                     value={diluicao.c2}
@@ -651,6 +660,7 @@ export default function ModuloSolucoes({ onAbrirModoBalanca }) {
                 <div className="flex gap-2">
                   <input
                     type="number"
+                    inputMode="decimal"
                     step="any"
                     min="0"
                     value={diluicao.v2}

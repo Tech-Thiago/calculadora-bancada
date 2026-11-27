@@ -1,4 +1,4 @@
-﻿import { useEffect, useState } from "react";
+﻿import { lazy, Suspense, useEffect, useState } from "react";
 import {
   Moon,
   Sun,
@@ -13,12 +13,6 @@ import {
   WifiOff,
 } from "lucide-react";
 import ModuloCompositos from "./modules/ModuloCompositos";
-import ModuloPolimeros from "./modules/ModuloPolimeros";
-import ModuloCeramica from "./modules/ModuloCeramica";
-import ModuloSolucoes from "./modules/ModuloSolucoes";
-import ModuloMetais from "./modules/ModuloMetais";
-import PainelDados from "./components/PainelDados";
-import ModoBalanca from "./components/ModoBalanca";
 import { TEMAS_MODULO } from "./utils/temaModulos";
 import { adicionarHistorico } from "./utils/storage";
 import {
@@ -28,6 +22,13 @@ import {
   lerLinkCompartilhado,
 } from "./utils/exportacao";
 import baseCientificaPubChem from "./data/base_cientifica_pubchem.json";
+
+const ModuloPolimeros = lazy(() => import("./modules/ModuloPolimeros"));
+const ModuloCeramica = lazy(() => import("./modules/ModuloCeramica"));
+const ModuloSolucoes = lazy(() => import("./modules/ModuloSolucoes"));
+const ModuloMetais = lazy(() => import("./modules/ModuloMetais"));
+const PainelDados = lazy(() => import("./components/PainelDados"));
+const ModoBalanca = lazy(() => import("./components/ModoBalanca"));
 
 const DATA_BASE_PUBCHEM = baseCientificaPubChem?.atualizado_em_utc
   ? new Date(baseCientificaPubChem.atualizado_em_utc).toLocaleDateString("pt-BR")
@@ -168,33 +169,41 @@ export default function App() {
   // MODO BALANCA
   if (dadosBalanca) {
     return (
-      <ModoBalanca
-        dadosBalanca={dadosBalanca}
-        marcados={marcados}
-        massasReais={massasReais}
-        onAlternarItem={alternarItem}
-        onMarcarPesado={marcarComoPesado}
-        onAtualizarMassaReal={atualizarMassaReal}
-        onLimpar={() => {
-          setMarcados({});
-          setMassasReais({});
-        }}
-        onFechar={() => {
-          window.history.replaceState({}, "", window.location.pathname);
-          setDadosBalanca(null);
-        }}
-        onCopiarLink={copiarLinkWhatsApp}
-        onExportarCSV={() => exportarCSV(dadosBalanca, { metaFicha, resolucaoBalanca, massasReais })}
-        linkCopiado={linkCopiado}
-        wakeLockAtivo={wakeLockAtivo}
-        resolucaoBalanca={resolucaoBalanca}
-        onChangeResolucao={setResolucaoBalanca}
-        metaFicha={metaFicha}
-        onChangeMetaFicha={setMetaFicha}
-        modoEscuro={modoEscuro}
-        onAlternarTema={() => setModoEscuro((prev) => !prev)}
-        dataBasePubChem={DATA_BASE_PUBCHEM}
-      />
+      <Suspense
+        fallback={
+          <div className="min-h-screen bg-[#f2f4f8] dark:bg-[#0b0d12] flex items-center justify-center text-xs font-mono text-slate-400">
+            Carregando Modo Balança...
+          </div>
+        }
+      >
+        <ModoBalanca
+          dadosBalanca={dadosBalanca}
+          marcados={marcados}
+          massasReais={massasReais}
+          onAlternarItem={alternarItem}
+          onMarcarPesado={marcarComoPesado}
+          onAtualizarMassaReal={atualizarMassaReal}
+          onLimpar={() => {
+            setMarcados({});
+            setMassasReais({});
+          }}
+          onFechar={() => {
+            window.history.replaceState({}, "", window.location.pathname);
+            setDadosBalanca(null);
+          }}
+          onCopiarLink={copiarLinkWhatsApp}
+          onExportarCSV={() => exportarCSV(dadosBalanca, { metaFicha, resolucaoBalanca, massasReais })}
+          linkCopiado={linkCopiado}
+          wakeLockAtivo={wakeLockAtivo}
+          resolucaoBalanca={resolucaoBalanca}
+          onChangeResolucao={setResolucaoBalanca}
+          metaFicha={metaFicha}
+          onChangeMetaFicha={setMetaFicha}
+          modoEscuro={modoEscuro}
+          onAlternarTema={() => setModoEscuro((prev) => !prev)}
+          dataBasePubChem={DATA_BASE_PUBCHEM}
+        />
+      </Suspense>
     );
   }
 
@@ -320,19 +329,35 @@ export default function App() {
         </header>
 
         <main className="flex-1 lab-workspace" data-modulo={abaAtiva}>
-          {abaAtiva === "compositos" && <ModuloCompositos onAbrirModoBalanca={abrirModoBalanca} />}
-          {abaAtiva === "polimeros" && <ModuloPolimeros onAbrirModoBalanca={abrirModoBalanca} />}
-          {abaAtiva === "ceramica" && <ModuloCeramica onAbrirModoBalanca={abrirModoBalanca} />}
-          {abaAtiva === "solucoes" && <ModuloSolucoes onAbrirModoBalanca={abrirModoBalanca} />}
-          {abaAtiva === "metais" && <ModuloMetais onAbrirModoBalanca={abrirModoBalanca} />}
+          <Suspense
+            fallback={
+              <div className="min-h-[420px] rounded-3xl bg-white/70 dark:bg-[#141720]/70 border border-slate-200/70 dark:border-white/8 flex items-center justify-center text-xs font-mono text-slate-400">
+                Carregando módulo...
+              </div>
+            }
+          >
+            {abaAtiva === "compositos" && <ModuloCompositos onAbrirModoBalanca={abrirModoBalanca} />}
+            {abaAtiva === "polimeros" && <ModuloPolimeros onAbrirModoBalanca={abrirModoBalanca} />}
+            {abaAtiva === "ceramica" && <ModuloCeramica onAbrirModoBalanca={abrirModoBalanca} />}
+            {abaAtiva === "solucoes" && <ModuloSolucoes onAbrirModoBalanca={abrirModoBalanca} />}
+            {abaAtiva === "metais" && <ModuloMetais onAbrirModoBalanca={abrirModoBalanca} />}
+          </Suspense>
         </main>
       </div>
 
       {painelDadosAberto && (
-        <PainelDados
-          onFechar={() => setPainelDadosAberto(false)}
-          onAbrirHistorico={(h) => abrirModoBalanca(h, false)}
-        />
+        <Suspense
+          fallback={
+            <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs flex items-center justify-center text-xs font-mono text-white">
+              Carregando...
+            </div>
+          }
+        >
+          <PainelDados
+            onFechar={() => setPainelDadosAberto(false)}
+            onAbrirHistorico={(h) => abrirModoBalanca(h, false)}
+          />
+        </Suspense>
       )}
     </div>
   );

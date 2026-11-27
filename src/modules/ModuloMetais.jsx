@@ -5,6 +5,7 @@ import { ELEMENTOS_INFO } from "../data/tabelaPeriodica";
 import AutocompleteInput from "../components/AutocompleteInput";
 import BarraProporcao from "../components/BarraProporcao";
 import AtalhosEscala from "../components/AtalhosEscala";
+import InputStepper from "../components/InputStepper";
 import { TEMAS_MODULO } from "../utils/temaModulos";
 
 const tema = TEMAS_MODULO.metais;
@@ -85,6 +86,14 @@ export default function ModuloMetais({ onAbrirModoBalanca }) {
       return proximo;
     });
   }
+
+  const somaSecundarios = useMemo(
+    () =>
+      elementos
+        .slice(1)
+        .reduce((acc, item) => acc + (parseFloat(item.fracaoPct) || 0), 0),
+    [elementos]
+  );
 
   const resultado = useMemo(
     () =>
@@ -170,6 +179,7 @@ export default function ModuloMetais({ onAbrirModoBalanca }) {
               </label>
               <input
                 type="number"
+                inputMode="decimal"
                 step="any"
                 min="0"
                 value={massaAlvoG}
@@ -189,13 +199,12 @@ export default function ModuloMetais({ onAbrirModoBalanca }) {
               <label className="block text-xs font-semibold text-slate-500 mb-2">
                 Margem global (%)
               </label>
-              <input
-                type="number"
-                step="any"
-                min="0"
+              <InputStepper
                 value={perdaPct}
-                onChange={(e) => setPerdaPct(e.target.value)}
-                className="w-full px-3.5 py-2.5 text-sm font-mono font-semibold"
+                onChange={setPerdaPct}
+                step={1}
+                min={0}
+                ariaLabel="Margem global (%)"
               />
             </div>
           </div>
@@ -231,22 +240,14 @@ export default function ModuloMetais({ onAbrirModoBalanca }) {
             {elementos.map((el, idx) => {
               const baseBloqueada = idx === 0 && autoCompletarBase;
               const mostrarSlider = autoCompletarBase && idx >= 1;
+              const valorAtualNum = parseFloat(el.fracaoPct) || 0;
               const somaOutrosSecundarios = mostrarSlider
-                ? elementos
-                    .slice(1)
-                    .reduce(
-                      (acc, item, subIdx) =>
-                        subIdx + 1 === idx ? acc : acc + (parseFloat(item.fracaoPct) || 0),
-                      0
-                    )
+                ? Math.max(0, somaSecundarios - valorAtualNum)
                 : 0;
               const maxPermitido = mostrarSlider
                 ? Math.max(0, Number((100 - somaOutrosSecundarios).toFixed(2)))
                 : 100;
-              const valorSlider = Math.min(
-                maxPermitido,
-                Math.max(0, parseFloat(el.fracaoPct) || 0)
-              );
+              const valorSlider = Math.min(maxPermitido, Math.max(0, valorAtualNum));
 
               return (
                 <div
@@ -273,6 +274,7 @@ export default function ModuloMetais({ onAbrirModoBalanca }) {
                     </label>
                     <input
                       type="number"
+                      inputMode="decimal"
                       step="any"
                       min="0"
                       max="100"
@@ -289,6 +291,7 @@ export default function ModuloMetais({ onAbrirModoBalanca }) {
                     </label>
                     <input
                       type="number"
+                      inputMode="decimal"
                       step="any"
                       min="0.1"
                       max="100"
@@ -304,6 +307,7 @@ export default function ModuloMetais({ onAbrirModoBalanca }) {
                     </label>
                     <input
                       type="number"
+                      inputMode="decimal"
                       step="any"
                       min="1"
                       max="100"

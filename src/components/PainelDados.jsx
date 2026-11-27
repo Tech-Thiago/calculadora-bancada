@@ -327,6 +327,7 @@ export default function PainelDados({ onFechar, onAbrirHistorico }) {
                 <div className="sm:col-span-2">
                   <input
                     type="number"
+                    inputMode="decimal"
                     step="any"
                     placeholder="ρ (g/cm³)"
                     value={novo.densidade_g_cm3}
@@ -337,6 +338,7 @@ export default function PainelDados({ onFechar, onAbrirHistorico }) {
                 <div className="sm:col-span-2">
                   <input
                     type="number"
+                    inputMode="decimal"
                     step="any"
                     placeholder="Pureza %"
                     value={novo.pureza_padrao_pct}

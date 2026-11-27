@@ -26,15 +26,22 @@ export default function BarraProporcao({ titulo, segmentos = [] }) {
           />
         ))}
       </div>
-      <div className="flex flex-wrap gap-x-4 gap-y-1.5 pt-0.5">
+      <ul className="space-y-1.5 pt-1">
         {segmentos.map((seg, idx) => (
-          <div key={seg.id || idx} className="inline-flex items-center gap-1.5 text-xs text-slate-600 dark:text-slate-300">
-            <span className={`w-2.5 h-2.5 rounded-full ${CORES_BARRA[idx % CORES_BARRA.length]}`} />
-            <span className="truncate max-w-[140px] font-medium">{seg.nome}</span>
-            <span className="font-mono text-[11px] text-slate-400">{seg.pct.toFixed(1)}%</span>
-          </div>
+          <li
+            key={seg.id || idx}
+            className="flex items-center gap-2 min-w-0 text-xs text-slate-600 dark:text-slate-300"
+          >
+            <span className={`w-2.5 h-2.5 rounded-full shrink-0 ${CORES_BARRA[idx % CORES_BARRA.length]}`} />
+            <span title={seg.nome} className="flex-1 min-w-0 truncate font-medium">
+              {seg.nome}
+            </span>
+            <span className="font-mono text-[11px] text-slate-500 dark:text-slate-400 shrink-0 tabular-nums">
+              {seg.pct.toFixed(1)}%
+            </span>
+          </li>
         ))}
-      </div>
+      </ul>
     </div>
   );
 }

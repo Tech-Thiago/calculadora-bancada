@@ -3,6 +3,7 @@ import { Plus, Trash2, Scale } from "lucide-react";
 import { calcularPolimero, SISTEMAS_RESINA_PRESET } from "../utils/calculoPolimeros";
 import BarraProporcao from "../components/BarraProporcao";
 import AtalhosEscala from "../components/AtalhosEscala";
+import InputStepper from "../components/InputStepper";
 import { TEMAS_MODULO } from "../utils/temaModulos";
 
 const tema = TEMAS_MODULO.polimeros;
@@ -157,6 +158,7 @@ export default function ModuloPolimeros({ onAbrirModoBalanca }) {
               <label className="block text-[11px] font-semibold text-slate-500 mb-1.5">Pureza (%)</label>
               <input
                 type="number"
+                inputMode="decimal"
                 step="any"
                 min="0.1"
                 max="100"
@@ -169,6 +171,7 @@ export default function ModuloPolimeros({ onAbrirModoBalanca }) {
               <label className="block text-[11px] font-semibold text-slate-500 mb-1.5">ρ (g/cm³)</label>
               <input
                 type="number"
+                inputMode="decimal"
                 step="any"
                 min="0"
                 value={resinaDensidade}
@@ -193,6 +196,7 @@ export default function ModuloPolimeros({ onAbrirModoBalanca }) {
               <label className="block text-[11px] font-semibold text-slate-500 mb-1.5">Pureza (%)</label>
               <input
                 type="number"
+                inputMode="decimal"
                 step="any"
                 min="0.1"
                 max="100"
@@ -205,6 +209,7 @@ export default function ModuloPolimeros({ onAbrirModoBalanca }) {
               <label className="block text-[11px] font-semibold text-slate-500 mb-1.5">ρ (g/cm³)</label>
               <input
                 type="number"
+                inputMode="decimal"
                 step="any"
                 min="0"
                 value={endurecedorDensidade}
@@ -220,6 +225,7 @@ export default function ModuloPolimeros({ onAbrirModoBalanca }) {
                 <label className="block text-xs font-semibold text-slate-500 mb-1.5">EEW da resina (g/eq)</label>
                 <input
                   type="number"
+                  inputMode="decimal"
                   step="any"
                   min="1"
                   value={eew}
@@ -231,6 +237,7 @@ export default function ModuloPolimeros({ onAbrirModoBalanca }) {
                 <label className="block text-xs font-semibold text-slate-500 mb-1.5">AHEW do endurecedor (g/eq)</label>
                 <input
                   type="number"
+                  inputMode="decimal"
                   step="any"
                   min="1"
                   value={ahew}
@@ -246,6 +253,7 @@ export default function ModuloPolimeros({ onAbrirModoBalanca }) {
               </label>
               <input
                 type="number"
+                inputMode="decimal"
                 step="any"
                 min="0"
                 value={phrManual}
@@ -271,6 +279,7 @@ export default function ModuloPolimeros({ onAbrirModoBalanca }) {
               <label className="block text-xs font-semibold text-slate-500 mb-1.5">Massa alvo (g)</label>
               <input
                 type="number"
+                inputMode="decimal"
                 step="any"
                 min="0"
                 value={massaAlvoG}
@@ -287,13 +296,12 @@ export default function ModuloPolimeros({ onAbrirModoBalanca }) {
             </div>
             <div>
               <label className="block text-xs font-semibold text-slate-500 mb-1.5">Margem de perda (%)</label>
-              <input
-                type="number"
-                step="any"
-                min="0"
+              <InputStepper
                 value={perdaPct}
-                onChange={(e) => setPerdaPct(e.target.value)}
-                className="w-full px-3.5 py-2.5 text-sm font-mono font-semibold"
+                onChange={setPerdaPct}
+                step={1}
+                min={0}
+                ariaLabel="Margem de perda (%)"
               />
             </div>
           </div>
@@ -347,6 +355,7 @@ export default function ModuloPolimeros({ onAbrirModoBalanca }) {
                     <label className="block text-[11px] font-semibold text-slate-500 mb-1.5">phr</label>
                     <input
                       type="number"
+                      inputMode="decimal"
                       step="any"
                       min="0"
                       value={ad.phr}
@@ -358,6 +367,7 @@ export default function ModuloPolimeros({ onAbrirModoBalanca }) {
                     <label className="block text-[11px] font-semibold text-slate-500 mb-1.5">Pur. (%)</label>
                     <input
                       type="number"
+                      inputMode="decimal"
                       step="any"
                       min="0.1"
                       max="100"
@@ -370,6 +380,7 @@ export default function ModuloPolimeros({ onAbrirModoBalanca }) {
                     <label className="block text-[11px] font-semibold text-slate-500 mb-1.5">ρ (g/cm³)</label>
                     <input
                       type="number"
+                      inputMode="decimal"
                       step="any"
                       min="0"
                       value={ad.densidade}
